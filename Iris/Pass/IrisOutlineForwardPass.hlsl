@@ -4,13 +4,11 @@
 // #pragma multi_compile __ _MAIN_LIGHT_SHADOWS_CASCADE
 // #pragma multi_compile __ _SHADOWS_SOFT
 
-#define Use_UniversalShaderLibraryCore
 #define Use_IrisMatrix
 #define Use_IrisMath
 #define Use_IrisVertex
-#define Use_UniversalShaderLibraryLighting
-
-#include "../IrisEntryUnity.hlsl"
+#define Use_ShaderLighting
+#include "../IrisEntry.hlsl"
 
 struct VertData
 {
@@ -29,11 +27,11 @@ struct FragData
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    fragData.PositionCS = VertDefault(vertData.PositionOS);
+    fragData.PositionCS = mul(Iris_Matrix_MVP,  vertData.PositionOS);
     fragData.UV = TRANSFORM_TEX(vertData.UV, _MainTex);
                 
     // 将法线转换到世界空间
-    float3 normalWS = TransformObjectToWorldNormal(vertData.Normal);
+    float3 normalWS = MatrixObjectToWorld(vertData.Normal);
     fragData.NormalWS = normalWS;
                 
     return fragData;

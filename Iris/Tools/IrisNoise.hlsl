@@ -11,14 +11,8 @@
 
 #include "IrisHash.hlsl" //引用Hash库
 
-//根据角度计算半径为的圆上的点 0~1
-float2 AngleToUV(float angle)
-{
-    angle %= 360;
-    return frac(float2(cos(angle) + 1, sin(angle) + 1) * 0.5);
-}
 
-float3 Random3(float3 c)
+float3 NoiseRandom3(float3 c)
 {
     float j = 4096.0 * sin(dot(c, float3(17.0, 59.4, 15.0)));
     float3 r;
@@ -30,7 +24,7 @@ float3 Random3(float3 c)
     return r - 0.5;
 }
 
-float2 Random2(float2 c)
+float2 NoiseRandom2(float2 c)
 {
     float j = 4096.0 * sin(dot(c, float2(17.0, 59.4)));
     float2 r;
@@ -40,7 +34,7 @@ float2 Random2(float2 c)
     return r - 0.5;
 }
 
-float Random(float c)
+float NoiseRandom(float c)
 {
     float j = 4096.0 * sin(dot(c, 17.0));
     float r;
@@ -90,10 +84,10 @@ float NoiseValue(float2 uv)
     float2 u = fracPos * fracPos * (3.0 - 2.0 * fracPos);
 
     // 四方取点，由于 intPos 是固定的，所以栅格化了（同一晶格内四点值相同，只是小数部分不同拿来插值）
-    float va = hash2to1(intPos + float2(0.0, 0.0)); // hash2to1 二维输入，映射到 1 维输出
-    float vb = hash2to1(intPos + float2(1.0, 0.0));
-    float vc = hash2to1(intPos + float2(0.0, 1.0));
-    float vd = hash2to1(intPos + float2(1.0, 1.0));
+    float va = Hash2to1(intPos + float2(0.0, 0.0)); // Hash2to1 二维输入，映射到 1 维输出
+    float vb = Hash2to1(intPos + float2(1.0, 0.0));
+    float vc = Hash2to1(intPos + float2(0.0, 1.0));
+    float vd = Hash2to1(intPos + float2(1.0, 1.0));
 
     // lerp 的展开形式，完全可以用 lerp(a, b, c) 嵌套实现
     float k0 = va;
@@ -114,10 +108,10 @@ float NoisePerlin(float2 uv)
 
     float2 u = fracPos * fracPos * (3.0 - 2.0 * fracPos);
 
-    float2 ga = hash22(intPos + float2(0.0, 0.0)); //四角hash向量
-    float2 gb = hash22(intPos + float2(1.0, 0.0));
-    float2 gc = hash22(intPos + float2(0.0, 1.0));
-    float2 gd = hash22(intPos + float2(1.0, 1.0));
+    float2 ga = Hash22(intPos + float2(0.0, 0.0)); //四角Hash向量
+    float2 gb = Hash22(intPos + float2(1.0, 0.0));
+    float2 gc = Hash22(intPos + float2(0.0, 1.0));
+    float2 gd = Hash22(intPos + float2(1.0, 1.0));
 
     float va = dot(ga, fracPos - float2(0.0, 0.0)); //方向向量、点积
     float vb = dot(gb, fracPos - float2(1.0, 0.0));
@@ -142,7 +136,7 @@ float NoiseSimple(float2 uv, float time = 0)
     float2 b = a - o + K2;
     float2 c = a - 1.0 + 2.0 * K2;
     float3 h = max(0.5 - float3(dot(a, a), dot(b, b), dot(c, c)), 0.0); // 使用 float3 替换 vec3
-    float3 n = h * h * h * h * float3(dot(a, hash22(i)), dot(b, hash22(i + o)), dot(c, hash22(i + 1.0))); // 使用 float3 替换 vec3
+    float3 n = h * h * h * h * float3(dot(a, Hash22(i)), dot(b, Hash22(i + o)), dot(c, Hash22(i + 1.0))); // 使用 float3 替换 vec3
     return dot(float3(70.0, 70.0, 70.0), n); // 使用 float3 替换 vec3
 }
 
@@ -159,9 +153,9 @@ float NoiseVoronoi(float2 uv, float time = 0)
         for (int y = -1; y <= 1; y++)
         {
             float2 offset = float2(x, y); //周围的偏移
-            float2 pos = hash22(intPos + offset); //生成随机特征点
+            float2 pos = Hash22(intPos + offset); //生成随机特征点
             pos = sin(time + 6.2831 * pos) * 0.5 + 0.5; //特征点随时间变化
-            float d = distance(pos + float2(x, y), fracPos); //fracPos作为采样点，hash22(intPos)作为生成点，来计算dist
+            float d = distance(pos + float2(x, y), fracPos); //fracPos作为采样点，Hash22(intPos)作为生成点，来计算dist
             dist = min(dist, d);
         }
     }
@@ -178,7 +172,7 @@ float NoiseWorley(float2 uv, float time = 0)
     for (int i = -1; i < 2; i++)
         for (int j = -1; j < 2; j++)
         {
-            float2 pos = hash22(index + float2(i, j));
+            float2 pos = Hash22(index + float2(i, j));
             pos = sin(time + 6.2831 * pos) * 0.5 + 0.5; //特征点随时间变化
             float dist = distance(pos + float2(i, j), fracPos);
             if (dist < d.x)
@@ -236,7 +230,7 @@ float NoiseSmoke(float2 uv, float time = 0, float uvSpeed=10, float scale =1, fl
 // _MainTex: 输入的纹理
 // uv: 输入的UV坐标
 // blur: 模糊的程度
-float4 BlurGaussian(sampler2D _MainTex, float2 uv, float blur)
+float4 NoiseBlurGaussian(sampler2D _MainTex, float2 uv, float blur)
 {
     // 1 / 16
     float offset = blur * 0.0625f;

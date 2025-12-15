@@ -1,5 +1,4 @@
-/****************************************
-*
+/*
 * 作者： 闪电黑客
 * 日期： 2025/12/5 10:29
 *
@@ -18,11 +17,22 @@
 * 
 */
 
+
+
 #ifndef Def_IrisEntry
 #define Def_IrisEntry
 
+// 引用 Shader 核心模块
+Inc_ShaderCore
+
+// 引用 Iris 参数接口规范
+Inc_IrisParams
 #include "Params/IrisParams.hlsl"
 
+
+#ifdef Use_ShaderLighting
+Inc_ShaderLighting
+#endif
 
 #ifdef Use_IrisVertex
 #include "Tools/IrisVertex.hlsl"
@@ -48,5 +58,6 @@
 #ifdef Use_IrisMatrix
 #include "Tools/IrisMatrix.hlsl"
 #endif
+
 
 #endif

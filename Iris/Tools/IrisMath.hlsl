@@ -11,6 +11,13 @@
 
 #include "../Params/IrisParams.hlsl"
 
+//根据角度计算半径为的圆上的点 0~1
+float2 AngleToUV(float angle)
+{
+    angle %= 360;
+    return frac(float2(cos(angle) + 1, sin(angle) + 1) * 0.5);
+}
+
 
 //钳制映射
 //将value从min-max映射到targetMin-targetMax之间，并进行钳制

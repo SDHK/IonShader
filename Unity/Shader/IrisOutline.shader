@@ -3,20 +3,15 @@ Shader "Iris/IrisOutline"
     Properties
     {
         _MainTex ("MainTex", 2D) = "white" {}
-        _Color ("Pass 1 Color", Color) = (1, 0, 0, 1)  // 红色
+        _Color ("Pass 1 Color", Color) =  (1, 0, 0, 1) // 红色
         _Scale ("Outline Scale", Float) = 0.1
     }
 
     SubShader
     {
-        Tags 
-        { 
-            "Queue" = "Transparent"
-            "RenderType" = "Transparent"
-            "RenderPipeline" = "UniversalPipeline"
-        }
+        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" }
         HLSLINCLUDE
-     
+
         #define IrisShader
 
         sampler2D _MainTex;
@@ -28,13 +23,15 @@ Shader "Iris/IrisOutline"
         Pass
         {
             Name "OUTLINE"
-            Tags { "LightMode" = "SRPDefaultUnlit" } 
-             // 只渲染背面
-            Cull Front 
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+            // 只渲染背面
+            Cull Front
             HLSLPROGRAM
-            #include "IrisOutlineDefaultPass.hlsl"
+            #define Use_IrisOutlineDefaultPass
+            #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
+
 
 
         // ========== 第二个Pass：正常渲染 ==========
@@ -45,10 +42,11 @@ Shader "Iris/IrisOutline"
             Cull Back
 
             ZWrite On
-            ZTest LEqual 
+            ZTest LEqual
             Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #include "IrisOutlineForwardPass.hlsl"
+            #define Use_IrisOutlineForwardPass
+            #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
     }

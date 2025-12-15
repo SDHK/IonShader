@@ -11,11 +11,10 @@
 #pragma vertex vert
 #pragma fragment frag
 
-#define Use_UniversalShaderLibraryCore
 #define Use_IrisMatrix
 #define Use_IrisMath
 #define Use_IrisVertex
-#include "../IrisEntryUnity.hlsl"
+#include "../IrisEntry.hlsl"
 
 struct VertData
 {
@@ -34,11 +33,13 @@ float _Scale;
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    fragData.PositionCS = VertScale(vertData.PositionOS, vertData.Normal, _Scale);
+
+    float3 position3 = vertData.PositionOS.xyz + vertData.Normal * _Scale;
+    fragData.PositionCS = mul(Iris_Matrix_MVP,float4( position3,1));
     return fragData;
 }
             
 half4 frag(FragData fragData) : SV_Target
 {
-    return _Color; // 返回红色
+    return _Color;
 }
