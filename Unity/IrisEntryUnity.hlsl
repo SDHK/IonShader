@@ -25,7 +25,6 @@
 //===[URP]===
 #ifdef IrisShader_URP
 #define Inc_ShaderCore "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-//#define Inc_ShaderLighting "../Unity/Library/IrisLightLibrary.hlsl"
 #define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 //===[BRP]===
@@ -41,6 +40,6 @@
 
 //===[加载 Iris Shader 库入口]===
 #include "../Iris/IrisEntryPass.hlsl"
-//#include "../Iris/IrisEntry.hlsl"
+#include "../Iris/IrisEntry.hlsl"
 
 #endif
