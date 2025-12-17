@@ -15,12 +15,19 @@
 * 2. 变量类型必须匹配（float3/float4/float4x4等）
 * 3. 参数语义需保持一致
 *
+*
+* 缩写说明：
+* - OS (Object Space)：物体空间，顶点相对于模型自身的坐标系
+* - WS (World Space)：世界空间，顶点相对于整个场景的坐标系
+* - VS (View Space)：观察空间，顶点相对于摄像机的坐标系
+* - CS (Clip Space)：裁剪空间，用于最终投影到屏幕的坐标系
+* 
+* 空间转换流程：OS → WS → VS → CS
 */
+
 #ifndef Def_IrisParams
 #define Def_IrisParams
 
-#include "IrisConst.hlsl"
-#include "IrisStructFields.hlsl"
 
 //如果没有定义，则提供默认空实现，避免编译错误
 #ifndef Inc_IrisParams
@@ -145,6 +152,8 @@
 #define Iris_FogColor Iris_Float4_Zero
 //float4 雾的参数。x:密度，y:起始距离，z:结束距离，w:其他参数
 #define Iris_FogParams Iris_Float4_Zero
+
+
 
 #endif
 

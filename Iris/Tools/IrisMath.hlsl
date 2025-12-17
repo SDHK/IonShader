@@ -9,7 +9,7 @@
 #ifndef Def_IrisMath
 #define Def_IrisMath
 
-#include "../Params/IrisParams.hlsl"
+#include "../Macro/IrisParams.hlsl"
 
 //根据角度计算半径为的圆上的点 0~1
 float2 AngleToUV(float angle)
@@ -53,6 +53,7 @@ float3 Scale(float3 position,float3 normal,float scale)
 {
     return position + normal * scale;
 }
+
 
 
 

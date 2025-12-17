@@ -3,21 +3,30 @@
 * 作者： 闪电黑客
 * 日期： 2025/12/10 14:18
 *
-* 描述： 结构体字段定义宏
+* 描述： 结构体定义
 * 
-* 说明：
-* - OS (Object Space)：物体空间，顶点相对于模型自身的坐标系
-* - WS (World Space)：世界空间，顶点相对于整个场景的坐标系
-* - VS (View Space)：观察空间，顶点相对于摄像机的坐标系
-* - CS (Clip Space)：裁剪空间，用于最终投影到屏幕的坐标系
-* 
-* 空间转换流程：OS → WS → VS → CS
-* 
-*
+
 */
 
-#ifndef Def_IrisStructFields
-#define Def_IrisStructFields
+#ifndef Def_IrisStruct
+#define Def_IrisStruct
+
+//=== [光照阴影数据结构] ===
+
+//光照阴影数据
+struct Iris_Light
+{
+    // 光源方向
+    half3   Direction;
+    // 光源颜色
+    half3   Color;
+    // 光源衰减
+    float   DistanceAttenuation; 
+    // 阴影衰减
+    half    ShadowAttenuation;
+    // 阴影层级
+    uint    LayerMask;
+};
 
 //===[数据结构字段映射]===
 // 顶点位置
@@ -32,12 +41,10 @@
 #define Var_VertexID uint VertexID : SV_VertexID;
 // 实例ID
 #define Var_InstanceID uint InstanceID : SV_InstanceID;
-
 // 顶点在屏幕空间位置
 #define Var_PositionCS float4 PositionCS : SV_POSITION;
 // 正面检测（双面渲染）
 #define Var_IsFrontFace bool IsFrontFace : SV_IsFrontFace;
-
 
 // ===[传值通道字段映射]===
 #define Var_T0(type,name) type name : TEXCOORD0;

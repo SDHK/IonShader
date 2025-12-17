@@ -10,7 +10,7 @@
 #ifndef Def_IrisMatrix
 #define Def_IrisMatrix
 
-#include "../Params/IrisParams.hlsl"
+#include "../Macro/IrisParams.hlsl"
 
 // 归一化一个三维向量，避免除以零
 float3 MatrixSafeNormalize(float3 inVec)

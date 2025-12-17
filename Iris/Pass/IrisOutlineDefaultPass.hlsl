@@ -14,6 +14,7 @@
 #define Use_IrisMatrix
 #define Use_IrisMath
 #define Use_IrisVertex
+//#define Use_ShaderLighting
 #include "../IrisEntry.hlsl"
 
 struct VertData
@@ -30,6 +31,7 @@ struct FragData
 float4 _Color;
 float _Scale;
 
+
 FragData vert(VertData vertData)
 {
     FragData fragData;
@@ -39,6 +41,7 @@ FragData vert(VertData vertData)
     return fragData;
 }
             
+
 half4 frag(FragData fragData) : SV_Target
 {
     return _Color;
