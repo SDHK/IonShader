@@ -38,15 +38,12 @@
 
 //===[引入参数接口规范]===
 #ifdef Inc_IrisParams
-//#include "../Unity/Macro/IrisParamsUnity.hlsl"
 #include Inc_IrisParams //如果外部定义了，则使用外部定义
 #else
 #include "Macro/IrisParams.hlsl"
 #endif
 //===[引入方法接口规范]===
 #ifdef Inc_IrisMethod
-//#include "../Unity/Macro/IrisMethodUnity.hlsl"
-
 #include Inc_IrisMethod //如果外部定义了，则使用外部定义
 #else
 #include "Macro/IrisMethod.hlsl"
