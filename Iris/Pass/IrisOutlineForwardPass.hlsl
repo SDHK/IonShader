@@ -43,8 +43,6 @@ half4 frag(FragData fragData) : SV_Target
     half4 albedo = tex2D(_MainTex, fragData.UV);
     // 获取主光源信息
 
-    //Light la = GetMainLight();
-
     Iris_Light mainLight = IrisGetMainLight();
 
     // 计算简单的 Lambert 光照

@@ -14,7 +14,7 @@
 #ifndef Def_IrisMethodUnity
 #define Def_IrisMethodUnity
 
-//==={定义Unity的方法宏]===
+//===[定义Unity的方法宏]===
 
 // 纹理坐标缩放偏移 float2  2d纹理 => float2 :TRANSFORM_TEX(uv,tex)
 #define Iris_Transform_TEX(uv,tex) TRANSFORM_TEX(uv,tex)
@@ -63,7 +63,7 @@ Iris_Light IrisGetMainLight()
     
     // BRP中 _LightColor0 的 RGB 是颜色，A 是强度
     light.Color = Iris_LightColor0.rgb * Iris_LightColor0.a;
-    
+
     // BRP中阴影衰减需要采样阴影贴图，这里默认设为1.0
     // 如果需要阴影，需要额外实现阴影采样函数
     light.ShadowAttenuation = 1.0;

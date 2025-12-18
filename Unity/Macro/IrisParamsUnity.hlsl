@@ -29,10 +29,6 @@
 #define Iris_ZBufferParams _ZBufferParams
 //float4 正交参数
 #define Iris_OrthoParams unity_OrthoParams
-//float4x4 相机投影矩阵
-#define Iris_CameraProjection unity_CameraProjection
-//float4x4 相机投影矩阵的逆矩阵
-#define Iris_CameraInvProjection unity_CameraInvProjection
 //float4 相机投影参数
 #define Iris_CameraProjectionParams unity_CameraProjectionParams
 

@@ -40,7 +40,6 @@ FragData vert(VertData vertData)
     return fragData;
 }
             
-
 half4 frag(FragData fragData) : SV_Target
 {
     return _Color;
