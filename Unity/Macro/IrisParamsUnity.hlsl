@@ -37,19 +37,7 @@
 #define Iris_CameraProjectionParams unity_CameraProjectionParams
 
 //===[矩阵]===
-
-//float4x4 模型视图投影矩阵
-#define Iris_Matrix_MVP UNITY_MATRIX_MVP
-//float4x4 模型视图投影矩阵的逆矩阵
-#define Iris_Matrix_I_MVP mul(UNITY_MATRIX_I_VP, UNITY_MATRIX_I_M)
-//float4x4 模型视图矩阵
-#define Iris_Matrix_MV UNITY_MATRIX_MV
-//float4x4 模型视图矩阵的逆矩阵
-#define Iris_Matrix_I_MV mul(UNITY_MATRIX_I_V, UNITY_MATRIX_I_M)
-//float4x4 视图投影矩阵
-#define Iris_Matrix_VP UNITY_MATRIX_VP
-//float4x4 视图投影矩阵的逆矩阵
-#define Iris_Matrix_I_VP UNITY_MATRIX_I_VP
+#ifdef IrisShader_URP
 //float4x4 模型矩阵
 #define Iris_Matrix_M UNITY_MATRIX_M
 //float4x4 模型矩阵的逆矩阵
@@ -62,6 +50,48 @@
 #define Iris_Matrix_P UNITY_MATRIX_P
 //float4x4 投影矩阵的逆矩阵
 #define Iris_Matrix_I_P UNITY_MATRIX_I_P
+//float4x4 视图投影矩阵
+#define Iris_Matrix_VP UNITY_MATRIX_VP
+//float4x4 视图投影矩阵的逆矩阵
+#define Iris_Matrix_I_VP UNITY_MATRIX_I_VP
+//float4x4 模型视图矩阵
+#define Iris_Matrix_MV UNITY_MATRIX_MV
+//float4x4 模型视图矩阵的逆矩阵
+#define Iris_Matrix_I_MV UNITY_MATRIX_I_MV
+//float4x4 模型视图投影矩阵
+#define Iris_Matrix_MVP UNITY_MATRIX_MVP
+//float4x4 模型视图投影矩阵的逆矩阵
+#define Iris_Matrix_I_MVP mul(Iris_Matrix_I_VP, Iris_Matrix_I_M)
+
+#elif defined(IrisShader_BRP)
+
+//float4x4 模型矩阵
+#define Iris_Matrix_M unity_ObjectToWorld
+//float4x4 模型矩阵的逆矩阵
+#define Iris_Matrix_I_M unity_WorldToObject
+//float4x4 视图矩阵
+#define Iris_Matrix_V UNITY_MATRIX_V
+//float4x4 视图矩阵的逆矩阵
+#define Iris_Matrix_I_V UNITY_MATRIX_I_V
+//float4x4 投影矩阵
+#define Iris_Matrix_P unity_CameraProjection
+//float4x4 投影矩阵的逆矩阵
+#define Iris_Matrix_I_P unity_CameraInvProjection
+
+//float4x4 视图投影矩阵
+#define Iris_Matrix_VP UNITY_MATRIX_VP
+//float4x4 视图投影矩阵的逆矩阵
+#define Iris_Matrix_I_VP mul(Iris_Matrix_I_V, Iris_Matrix_I_P)
+//float4x4 模型视图矩阵
+#define Iris_Matrix_MV UNITY_MATRIX_MV
+//float4x4 模型视图矩阵的逆矩阵
+#define Iris_Matrix_I_MV mul(Iris_Matrix_I_V, Iris_Matrix_I_M)
+//float4x4 模型视图投影矩阵
+#define Iris_Matrix_MVP UNITY_MATRIX_MVP
+//float4x4 模型视图投影矩阵的逆矩阵
+#define Iris_Matrix_I_MVP mul(Iris_Matrix_I_VP, Iris_Matrix_I_M)
+#endif
+
 
 //float4x4 模型视图矩阵的转置
 #define Iris_Matrix_T_MV UNITY_MATRIX_T_MV

@@ -19,7 +19,6 @@ float3 MatrixSafeNormalize(float3 inVec)
     return inVec * rsqrt(dp3);
 }
 
-
 // 转换坐标系：从模型坐标转到投影坐标系。顶点着色器常用
 float4 MatrixObjectToProjection(float4 pos)
 {
