@@ -28,9 +28,9 @@
 #define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 //===[BRP]===
-#elif IrisShader_BRP
+#elif defined(IrisShader_BRP)
 #define Inc_ShaderCore "UnityCG.cginc"
-#define Inc_ShaderLighting "UnityStandardBRP.cginc"
+#define Inc_ShaderLighting "Lighting.cginc"
 #endif
 
 //===[注入 Unity 参数映射]===

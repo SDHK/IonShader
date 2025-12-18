@@ -14,7 +14,6 @@
 #define Use_IrisMatrix
 #define Use_IrisMath
 #define Use_IrisVertex
-//#define Use_ShaderLighting
 #include "../IrisEntry.hlsl"
 
 struct VertData

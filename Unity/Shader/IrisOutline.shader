@@ -6,36 +6,61 @@ Shader "Iris/IrisOutline"
         _Color ("Pass 1 Color", Color) =  (1, 0, 0, 1)
         _Scale ("Outline Scale", Float) = 0.1
     }
-
+    HLSLINCLUDE
+    sampler2D _MainTex;
+    float4 _MainTex_ST;
+    ENDHLSL
+    //===[URP管线]===
     SubShader
     {
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" }
-        HLSLINCLUDE
-
-        #define IrisShader
-        sampler2D _MainTex;
-        float4 _MainTex_ST;
-        ENDHLSL
-
-        // ========== 第一个Pass：描边 ==========
+        Tags {"RenderPipeline" = "UniversalPipeline"  "Queue" = "Transparent" "RenderType" = "Transparent"   }
+        // ===[描边]====
         Pass
         {
-
             Name "OUTLINE"
-            Tags { "LightMode" = "SRPDefaultUnlit" }
-            // 只渲染背面
+            Tags { "LightMode" = "SRPDefaultUnlit"  }
+            Cull Front
+            HLSLPROGRAM
+            #define Use_IrisOutlineDefaultPass
+            #include "../IrisEntryUnity.hlsl"
+            ENDHLSL
+
+        }
+        // ===[简单渲染]===
+        Pass
+        {
+            Tags { "LightMode" = "UniversalForward" }
+            Cull Back
+            ZWrite On
+            ZTest LEqual
+            Blend SrcAlpha OneMinusSrcAlpha
+            HLSLPROGRAM
+            #define Use_IrisOutlineForwardPass
+            #include "../IrisEntryUnity.hlsl"
+            ENDHLSL
+        }
+    }
+
+    //===[BRP管线]===
+    SubShader
+    {
+        Tags { "Queue" = "Transparent" "RenderType" = "Transparent"  }
+        // ===[描边]====
+        Pass
+        {
+            Name "OUTLINE"
+            Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
             #define Use_IrisOutlineDefaultPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
-
-        // ========== 第二个Pass：正常渲染 ==========
+        // ===[简单渲染]===
         Pass
         {
             Name "FORWARD"
-            Tags { "LightMode" = "UniversalForward" }
+            Tags { "LightMode" = "ForwardBase" }
             Cull Back
             ZWrite On
             ZTest LEqual

@@ -36,7 +36,7 @@ Iris_Light IrisGetMainLight()
     return light;
 }
 
-#elif IrisShader_BRP
+#elif defined (IrisShader_BRP)
 //BRP获取主光源信息
 Iris_Light IrisGetMainLight()
 {
