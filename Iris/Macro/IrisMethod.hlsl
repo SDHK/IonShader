@@ -18,7 +18,7 @@
 #define Iris_Transform_TEX(uv, mainTex)
 
 //获取光照信息 Iris_Light
-#define IrisGetMainLight()
+#define Iris_GetMainLight()
 
 #endif
 #endif

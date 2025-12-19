@@ -24,7 +24,7 @@
 
 //URP获取主光源信息
 #ifdef IrisShader_URP
-Iris_Light IrisGetMainLight()
+Iris_Light Iris_GetMainLight()
 {
     Iris_Light light;
     Light urpLight = GetMainLight();
@@ -38,7 +38,7 @@ Iris_Light IrisGetMainLight()
 
 #elif defined (IrisShader_BRP)
 //BRP获取主光源信息
-Iris_Light IrisGetMainLight()
+Iris_Light Iris_GetMainLight()
 {
     Iris_Light light;
     

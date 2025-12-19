@@ -27,6 +27,7 @@
 #define Inc_ShaderCore "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
+
 //===[BRP]===
 #elif defined(IrisShader_BRP)
 #define Inc_ShaderCore "UnityCG.cginc"

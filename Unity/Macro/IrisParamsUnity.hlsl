@@ -53,7 +53,7 @@
 //float4x4 模型视图矩阵
 #define Iris_Matrix_MV UNITY_MATRIX_MV
 //float4x4 模型视图矩阵的逆矩阵
-#define Iris_Matrix_I_MV UNITY_MATRIX_I_MV
+#define Iris_Matrix_I_MV mul(Iris_Matrix_I_V, Iris_Matrix_I_M)
 //float4x4 模型视图投影矩阵
 #define Iris_Matrix_MVP UNITY_MATRIX_MVP
 //float4x4 模型视图投影矩阵的逆矩阵
@@ -93,10 +93,7 @@
 #define Iris_Matrix_T_MV UNITY_MATRIX_T_MV
 //float4x4 模型视图矩阵的逆转置
 #define Iris_Matrix_IT_MV UNITY_MATRIX_IT_MV
-//float4x4 对象到世界矩阵
-#define Iris_ObjectToWorld unity_ObjectToWorld
-//float4x4 世界到对象矩阵
-#define Iris_WorldToObject unity_WorldToObject
+
 
 //===[时间]===
 

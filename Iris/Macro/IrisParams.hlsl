@@ -15,32 +15,6 @@
 * 2. 变量类型必须匹配（float3/float4/float4x4等）
 * 3. 参数语义需保持一致
 *
-* 缩写说明：
-* - OS (Object Space)：物体空间，顶点相对于模型自身的坐标系
-* - WS (World Space)：世界空间，顶点相对于整个场景的坐标系
-* - VS (View Space)：观察空间，顶点相对于摄像机的坐标系
-* - CS (Clip Space)：裁剪空间，用于最终投影到屏幕的坐标系
-* 
-* 空间转换流程：OS --[M]--> WS --[V]--> VS --[P]--> CS
-* 代码实现：
-*   float4 positionOS = float4(vertexPosition, 1.0);           // OS
-*   float4 positionWS = mul(Iris_Matrix_M, positionOS);       // OS → WS (M)
-*   float4 positionVS = mul(Iris_Matrix_V, positionWS);       // WS → VS (V)
-*   float4 positionCS = mul(Iris_Matrix_P, positionVS);       // VS → CS (P)
-*
-* 详细说明：
-* OS → WS（对象空间 → 世界空间）
-*   使用：Model Matrix (M)
-*    作用：将顶点从模型本地坐标系转换到世界坐标系
-*    包含：位置、旋转、缩放
-* WS → VS（世界空间 → 观察空间）
-*    使用：View Matrix (V)
-*    作用：将顶点从世界坐标系转换到相机坐标系
-*    本质：相机变换（Camera Transform）
-* VS → CS（观察空间 → 裁剪空间）
-*    使用：Projection Matrix (P)
-*    作用：将顶点从观察空间投影到裁剪空间
-*    功能：透视/正交投影、视锥裁剪
 */
 
 #ifndef Def_IrisParams
@@ -96,10 +70,6 @@
 #define Iris_Matrix_T_MV Iris_Float4x4_Identity
 //float4x4 模型视图矩阵的逆转置
 #define Iris_Matrix_IT_MV Iris_Float4x4_Identity
-//float4x4 对象到世界矩阵
-#define Iris_ObjectToWorld Iris_Float4x4_Identity
-//float4x4 世界到对象矩阵
-#define Iris_WorldToObject Iris_Float4x4_Identity
 
 //===[时间]===
 

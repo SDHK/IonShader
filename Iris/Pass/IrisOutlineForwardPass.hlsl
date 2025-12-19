@@ -32,7 +32,7 @@ FragData vert(VertData vertData)
     fragData.UV = Iris_Transform_TEX(vertData.UV,_MainTex);
 
     // 将法线转换到世界空间
-    float3 normalWS = MatrixObjectToWorld(vertData.Normal);
+    float3 normalWS = Iris_ObjectToWorld(vertData.Normal);
     fragData.NormalWS = normalWS;
     return fragData;
 }
@@ -43,7 +43,7 @@ half4 frag(FragData fragData) : SV_Target
     half4 albedo = tex2D(_MainTex, fragData.UV);
     // 获取主光源信息
 
-    Iris_Light mainLight = IrisGetMainLight();
+    Iris_Light mainLight = Iris_GetMainLight();
 
     // 计算简单的 Lambert 光照
     half NdotL = saturate(dot(normalize(fragData.NormalWS), mainLight.Direction));
