@@ -57,6 +57,9 @@
 #define Iris_Matrix_M Iris_Float4x4_Identity
 //float4x4 模型矩阵的逆矩阵
 #define Iris_Matrix_I_M Iris_Float4x4_Identity
+//float4x4 模型矩阵的逆转置（用于法线转换）
+// 注意：默认实现中，法线转换在 Iris_ObjectToWorldNormal() 函数中处理
+#define Iris_Matrix_IT_M Iris_Float4x4_Identity
 //float4x4 视图矩阵
 #define Iris_Matrix_V Iris_Float4x4_Identity
 //float4x4 视图矩阵的逆矩阵

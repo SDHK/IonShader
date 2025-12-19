@@ -78,7 +78,9 @@ float3 Iris_ObjectToWorld(float3 pos)
 // 用于法线向量转换，正确处理非均匀缩放
 float3 Iris_ObjectToWorldNormal(float3 normal)
 {
-    return normalize(mul((float3x3)Iris_Matrix_IT_MV, normal));
+    // 使用模型矩阵的逆转置来转换法线到世界空间
+    // 注意：Iris_Matrix_IT_MV 会将法线转换到观察空间，而不是世界空间
+    return normalize(mul((float3x3)Iris_Matrix_IT_M, normal));
 }
 
 //===[World Space (WS) 转换]===

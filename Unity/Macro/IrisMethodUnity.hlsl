@@ -24,6 +24,7 @@
 
 //URP获取主光源信息
 #ifdef IrisShader_URP
+// 无参数版本（无阴影支持）
 Iris_Light Iris_GetMainLight()
 {
     Iris_Light light;
@@ -33,6 +34,26 @@ Iris_Light Iris_GetMainLight()
     light.DistanceAttenuation = urpLight.distanceAttenuation;
     light.ShadowAttenuation = urpLight.shadowAttenuation;
     light.LayerMask = urpLight.layerMask; 
+    return light;
+}
+
+// 带世界空间位置的版本（支持阴影）
+Iris_Light Iris_GetMainLight(float3 positionWS)
+{
+    Iris_Light light;
+    #if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
+    // 有阴影时，传递阴影坐标
+    float4 shadowCoord = TransformWorldToShadowCoord(positionWS);
+    Light urpLight = GetMainLight(shadowCoord);
+    #else
+    // 无阴影时，直接调用
+    Light urpLight = GetMainLight();
+    #endif
+    light.Direction = urpLight.direction;
+    light.Color = urpLight.color;
+    light.DistanceAttenuation = urpLight.distanceAttenuation;
+    light.ShadowAttenuation = urpLight.shadowAttenuation;
+    light.LayerMask = urpLight.layerMask;
     return light;
 }
 
@@ -72,6 +93,13 @@ Iris_Light Iris_GetMainLight()
     light.LayerMask = 0;
     
     return light;
+}
+
+// BRP带参数的版本（为了接口统一，参数会被忽略）
+Iris_Light Iris_GetMainLight(float3 positionWS)
+{
+    // BRP中暂时忽略位置参数，使用无参数版本
+    return Iris_GetMainLight();
 }
 
 
