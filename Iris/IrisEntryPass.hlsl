@@ -19,4 +19,8 @@
     #include "Pass/IrisOutlineForwardPass.hlsl"
 #endif
 
+#ifdef Use_IrisOutlineShadowPass
+    #include "Pass/IrisOutlineShadowPass.hlsl"
+#endif
+
 #endif

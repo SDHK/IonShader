@@ -39,6 +39,20 @@ Shader "Iris/IrisOutline"
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
+        // ===[阴影投射]===
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            Cull Back
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            HLSLPROGRAM
+            #define Use_IrisOutlineShadowPass
+            #include "../IrisEntryUnity.hlsl"
+            ENDHLSL
+        }
     }
     //===[BRP管线]===
     SubShader
@@ -66,6 +80,20 @@ Shader "Iris/IrisOutline"
             Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
             #define Use_IrisOutlineForwardPass
+            #include "../IrisEntryUnity.hlsl"
+            ENDHLSL
+        }
+        // ===[阴影投射]===
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            Cull Back
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            HLSLPROGRAM
+            #define Use_IrisOutlineShadowPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
