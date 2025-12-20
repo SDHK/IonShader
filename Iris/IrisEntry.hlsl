@@ -27,6 +27,11 @@
 #include Inc_ShaderLighting
 #endif
 
+// 引用 Shader 阴影模块（BRP需要）
+#ifdef Inc_ShaderAutoLight
+#include Inc_ShaderAutoLight
+#endif
+
 
 
 //===[Iris库引用]===

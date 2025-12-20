@@ -70,7 +70,8 @@
 #define Iris_Matrix_I_M unity_WorldToObject
 //float4x4 模型矩阵的逆转置（用于法线转换）
 // BRP 中有 UNITY_MATRIX_IT_M
-#define Iris_Matrix_IT_M UNITY_MATRIX_IT_M
+//#define Iris_Matrix_IT_M UNITY_MATRIX_IT_M
+#define Iris_Matrix_IT_M transpose((float3x3)Iris_Matrix_I_M)
 //float4x4 视图矩阵
 #define Iris_Matrix_V UNITY_MATRIX_V
 //float4x4 视图矩阵的逆矩阵

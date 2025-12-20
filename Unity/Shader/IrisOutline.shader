@@ -57,7 +57,8 @@ Shader "Iris/IrisOutline"
     //===[BRP管线]===
     SubShader
     {
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent"  }
+        Tags {"RenderType" = "Opaque"  }
+        LOD 100
         // ===[描边]====
         Pass
         {
@@ -74,10 +75,10 @@ Shader "Iris/IrisOutline"
         {
             Name "FORWARD"
             Tags { "LightMode" = "ForwardBase" }
-            Cull Back
-            ZWrite On
-            ZTest LEqual
-            Blend SrcAlpha OneMinusSrcAlpha
+            // Cull Back
+            // ZWrite On
+            // ZTest LEqual
+            // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
             #define Use_IrisOutlineForwardPass
             #include "../IrisEntryUnity.hlsl"
@@ -99,4 +100,5 @@ Shader "Iris/IrisOutline"
         }
     }
     // Fallback "Universal Render Pipeline/Lit"
+    FallBack "Diffuse"
 }

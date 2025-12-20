@@ -7,27 +7,32 @@
 *
 */
 
-#pragma vertex ShadowVertex
-#pragma fragment ShadowFragment
+#pragma vertex vert
+#pragma fragment frag
+#pragma multi_compile_shadowcaster
 
 #define Use_IrisMatrix
 #include "../IrisEntry.hlsl"
 
 struct ShadowVertData
 {
-    Var_PositionOS
-    Var_Normal
+    //Var_PositionOS
+    //Var_Normal
+
+    float4 vertex : POSITION;
+    float3 normal : NORMAL;
 };
 
 struct ShadowFragData
 {
-    Var_PositionCS
+    //Var_PositionCS
+    V2F_SHADOW_CASTER;
 };
 
 float4 _Color;
 float _Scale;
 
-ShadowFragData ShadowVertex(ShadowVertData vertData)
+ShadowFragData vert(ShadowVertData v)
 {
     ShadowFragData fragData;
     
@@ -37,14 +42,17 @@ ShadowFragData ShadowVertex(ShadowVertData vertData)
     // fragData.PositionCS = Iris_ObjectToClip(float4(position3, 1.0));
     
     // 使用原始顶点位置（推荐）
-    fragData.PositionCS = Iris_ObjectToClip(vertData.PositionOS);
-    
+    //fragData.PositionCS = Iris_ObjectToClip(vertData.PositionOS);
+    TRANSFER_SHADOW_CASTER_NORMALOFFSET(fragData)
+
     return fragData;
 }
 
-half4 ShadowFragment(ShadowFragData fragData) : SV_Target
+half4 frag(ShadowFragData fragData) : SV_Target
 {
     // 阴影 Pass 只需要输出深度，颜色值不影响阴影
     // 返回 0 即可，深度信息已经在 PositionCS 中
-    return 0;
+    //return 0;
+    SHADOW_CASTER_FRAGMENT(fragData)
+
 }

@@ -19,7 +19,7 @@
 #define Def_IrisEntryUnity
 
 //定义当前使用的渲染管线类型
-#define IrisShader_URP
+#define IrisShader_BRP
 
 //===[注入 Shader 核心模块]===
 //===[URP]===
@@ -27,11 +27,11 @@
 #define Inc_ShaderCore "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-
 //===[BRP]===
 #elif defined(IrisShader_BRP)
 #define Inc_ShaderCore "UnityCG.cginc"
 #define Inc_ShaderLighting "Lighting.cginc"
+#define Inc_ShaderAutoLight "AutoLight.cginc"
 #endif
 
 //===[注入 Unity 参数映射]===

@@ -70,7 +70,7 @@ Iris_Light Iris_GetMainLight()
     if (lightPos.w == 0.0)
     {
         // 方向光：直接使用xyz作为方向向量
-        light.Direction = normalize(lightPos.xyz);
+        light.Direction = lightPos.xyz;
         light.DistanceAttenuation = 1.0; // 方向光无距离衰减
     }
     else
@@ -78,12 +78,13 @@ Iris_Light Iris_GetMainLight()
         // 点光源：需要世界空间位置来计算方向
         // 注意：点光源需要传入世界空间位置，这里提供一个默认实现
         // 实际使用时可能需要重载函数或传入位置参数
-        light.Direction = half3(0, 1, 0); // 默认向上，实际应计算方向
+        light.Direction = lightPos.xyz;// half3(0, 1, 0); // 默认向上，实际应计算方向
         light.DistanceAttenuation = 1.0; // 需要根据距离计算
     }
     
     // BRP中 _LightColor0 的 RGB 是颜色，A 是强度
-    light.Color = Iris_LightColor0.rgb * Iris_LightColor0.a;
+    //light.Color = Iris_LightColor0.rgb * Iris_LightColor0.a;
+    light.Color = Iris_LightColor0;
 
     // BRP中阴影衰减需要采样阴影贴图，这里默认设为1.0
     // 如果需要阴影，需要额外实现阴影采样函数
