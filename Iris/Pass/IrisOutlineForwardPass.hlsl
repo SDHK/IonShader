@@ -12,7 +12,8 @@
 #define Use_ShaderLighting
 #define Use_ShaderAutoLight
 #include "../IrisEntry.hlsl"
-
+#include "Lighting.cginc"
+#include "AutoLight.cginc"
 struct VertData
 {
     Var_PositionOS

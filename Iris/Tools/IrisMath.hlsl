@@ -18,6 +18,12 @@ float2 Iris_AngleToUV(float angle)
     return frac(float2(cos(angle) + 1, sin(angle) + 1) * 0.5);
 }
 
+//计算三维向量的长度
+float Iris_Length(float3 vector3)
+{
+    return sqrt(dot(vector3, vector3));
+}
+
 
 //钳制映射
 //将value从min-max映射到targetMin-targetMax之间，并进行钳制
