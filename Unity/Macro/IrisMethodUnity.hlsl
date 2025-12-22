@@ -110,6 +110,52 @@ Iris_Light Iris_GetMainLight(float3 positionWS)
 #endif
 
 
+//=== [阴影投射相关方法] ===
+#ifdef IrisShader_URP
+
+// URP阴影投射：非常简单！
+float4 Iris_ShadowCasterPositionCS(float4 positionOS, float3 normalOS)
+{
+    float3 positionWS = TransformObjectToWorld(positionOS.xyz);
+    // URP自动处理阴影偏移，不需要手动调用UnityApplyLinearShadowBias
+    return TransformWorldToHClip(positionWS);
+}
+
+// URP不需要vec字段，但为了接口统一可以设为0
+float3 Iris_ShadowCasterVector(float4 positionOS)
+{
+    return 0; // URP不需要
+}
+
+// URP fragment shader只需要返回0
+half Iris_ShadowCasterFragment(float3 vec)
+{
+    return 0; // 深度信息已经在PositionCS中
+}
+
+#elif defined(IrisShader_BRP)
+
+// BRP阴影投射：需要手动处理
+float4 Iris_ShadowCasterPositionCS(float4 positionOS, float3 normalOS)
+{
+    float4 positionCS = UnityClipSpaceShadowCasterPos(positionOS, normalOS);
+    return UnityApplyLinearShadowBias(positionCS);
+}
+// 计算从光源位置到顶点的向量（用于距离衰减）
+float3 Iris_ShadowCasterVector(float4 positionOS)
+{
+    float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
+    return worldPos - _LightPositionRange.xyz;
+}
+// 计算阴影衰减（基于距离）
+half Iris_ShadowCasterFragment(float3 vec)
+{
+    return (length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w;
+}
+
+#endif
+
+
 
 
 
