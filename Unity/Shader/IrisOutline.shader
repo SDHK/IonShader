@@ -24,7 +24,6 @@ Shader "Iris/IrisOutline"
             ZWrite On  // 透明队列通常关闭深度写入
             ZTest LEqual
             HLSLPROGRAM
-            #define IrisShader_URP
             #define Use_IrisOutlineDefaultPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -41,7 +40,6 @@ Shader "Iris/IrisOutline"
 
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define IrisShader_URP
             #define Use_IrisOutlineForwardPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -56,7 +54,6 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define IrisShader_URP
             #define Use_IrisOutlineShadowPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -74,7 +71,6 @@ Shader "Iris/IrisOutline"
             Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
-            #define IrisShader_BRP
             #define Use_IrisOutlineDefaultPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -89,7 +85,6 @@ Shader "Iris/IrisOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define IrisShader_BRP
             #define Use_IrisOutlineForwardPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -104,7 +99,6 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define IrisShader_BRP
             #define Use_IrisOutlineShadowPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
