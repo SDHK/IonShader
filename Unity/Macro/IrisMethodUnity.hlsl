@@ -37,24 +37,31 @@ Iris_Light Iris_GetMainLight()
     return light;
 }
 
-// 带世界空间位置的版本（支持阴影）
-Iris_Light Iris_GetMainLight(float3 positionWS)
+// 带阴影坐标的版本（优化版本，避免重复计算shadowCoord）
+Iris_Light Iris_GetMainLight(float4 shadowCoord)
 {
     Iris_Light light;
-    #if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
-    // 有阴影时，传递阴影坐标
-    float4 shadowCoord = TransformWorldToShadowCoord(positionWS);
     Light urpLight = GetMainLight(shadowCoord);
-    #else
-    // 无阴影时，直接调用
-    Light urpLight = GetMainLight();
-    #endif
+
+    //#if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
+    //// 有阴影时，直接使用传入的阴影坐标
+    //Light urpLight = GetMainLight(shadowCoord);
+    //#else
+    //// 无阴影时，直接调用
+    //Light urpLight = GetMainLight();
+    //#endif
     light.Direction = urpLight.direction;
     light.Color = urpLight.color;
     light.DistanceAttenuation = urpLight.distanceAttenuation;
     light.ShadowAttenuation = urpLight.shadowAttenuation;
     light.LayerMask = urpLight.layerMask;
     return light;
+}
+
+// 提供单独的世界空间位置到阴影坐标转换方法
+float4 Iris_TransfromWorldToShadowCoord(float3 positionWS,float4 shadowCoord)
+{
+    return TransformWorldToShadowCoord(positionWS);
 }
 
 #elif defined (IrisShader_BRP)
@@ -96,18 +103,57 @@ Iris_Light Iris_GetMainLight()
     return light;
 }
 
-// BRP带参数的版本（为了接口统一，参数会被忽略）
-Iris_Light Iris_GetMainLight(float3 positionWS)
+
+
+// BRP带参数的版本（支持阴影）
+Iris_Light Iris_GetMainLight(float4 shadowCoord)
 {
-    // BRP中暂时忽略位置参数，使用无参数版本
-    return Iris_GetMainLight();
+    Iris_Light light = Iris_GetMainLight();
+    light.ShadowAttenuation =unitySampleShadow(shadowCoord);
+    return light;
 }
 
+float4 Iris_TransfromWorldToShadowCoord(float3 positionWS,float4 shadowCoord)
+{
+    //return UnityWorldToShadowCoord(positionWS);
+    return shadowCoord;
+}
+
+#endif
+
+//=== [阴影接收相关方法] ===
+// 这些方法用于在Forward Pass中接收阴影
+// 注意：阴影接收需要光照支持，所以放在Use_ShaderLighting块内
+
+#ifdef IrisShader_URP
+
+// URP阴影坐标字段定义（在结构体中声明）
+// 使用方式：在FragData结构体中添加 Iris_ShadowCoords(texcoordIndex)
+#define Iris_ShadowCoords(index) float4 _ShadowCoord : TEXCOORD##index;
+
+// URP传递阴影坐标（在vertex shader中调用）
+// 使用方式：Iris_TransferShadow(fragData, positionWS)
+// 注意：positionWS必须是世界空间坐标（float3）
+#define Iris_TransferShadow(fragData, positionWS) \
+    fragData._ShadowCoord = TransformWorldToShadowCoord(positionWS);
+
+
+#elif defined(IrisShader_BRP)
+
+// BRP阴影坐标字段定义（使用AutoLight.cginc的宏）
+// 使用方式：在FragData结构体中添加 Iris_ShadowCoords(texcoordIndex)
+#define Iris_ShadowCoords(index) SHADOW_COORDS(index)
+
+// BRP传递阴影坐标（在vertex shader中调用）
+// 使用方式：Iris_TransferShadow(fragData, positionWS)
+// 注意：BRP的TRANSFER_SHADOW不需要positionWS参数，但为了接口统一保留
+// positionWS必须是世界空间坐标（float3）
+#define Iris_TransferShadow(fragData, positionWS) TRANSFER_SHADOW(fragData)
 
 
 #endif
 
-#endif
+#endif  // Use_ShaderLighting
 
 
 //=== [阴影投射相关方法] ===

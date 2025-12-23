@@ -18,15 +18,23 @@
 #ifndef Def_IrisEntryUnity
 #define Def_IrisEntryUnity
 
-//定义当前使用的渲染管线类型
-#define IrisShader_BRP
+//===[自动检测渲染管线类型]===
+// 如果外部没有定义IrisShader_URP或IrisShader_BRP，则尝试自动检测
+#if !defined(IrisShader_URP) && !defined(IrisShader_BRP)
+    // URP检测：检查URP特有的宏定义
+    #if defined(UNITY_URP) || defined(UNITY_PIPELINE_URP) || defined(UNITY_RENDER_PIPELINE_URP)
+        #define IrisShader_URP
+    #else
+        // 默认使用BRP
+        #define IrisShader_BRP
+    #endif
+#endif
 
 //===[注入 Shader 核心模块]===
 //===[URP]===
 #ifdef IrisShader_URP
 #define Inc_ShaderCore "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-
 //===[BRP]===
 #elif defined(IrisShader_BRP)
 #define Inc_ShaderCore "UnityCG.cginc"

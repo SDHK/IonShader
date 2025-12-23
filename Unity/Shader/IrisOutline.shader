@@ -13,14 +13,18 @@ Shader "Iris/IrisOutline"
     //===[URP管线]===
     SubShader
     {
-        Tags {"RenderPipeline" = "UniversalPipeline"  "Queue" = "Transparent" "RenderType" = "Transparent"   }
+        Tags {"RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque"  "Queue" = "Geometry" }
         // ===[描边]====
         Pass
         {
+
             Name "OUTLINE"
-            Tags { "LightMode" = "SRPDefaultUnlit"  }
+            Tags { "LightMode" = "UniversalForwardOnly"  }
             Cull Front
+            ZWrite On  // 透明队列通常关闭深度写入
+            ZTest LEqual
             HLSLPROGRAM
+            #define IrisShader_URP
             #define Use_IrisOutlineDefaultPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -33,8 +37,11 @@ Shader "Iris/IrisOutline"
             Cull Back
             ZWrite On
             ZTest LEqual
-            Blend SrcAlpha OneMinusSrcAlpha
+            Blend Off            // 强制不混合
+
+            //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
+            #define IrisShader_URP
             #define Use_IrisOutlineForwardPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -49,6 +56,7 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
+            #define IrisShader_URP
             #define Use_IrisOutlineShadowPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -66,6 +74,7 @@ Shader "Iris/IrisOutline"
             Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
+            #define IrisShader_BRP
             #define Use_IrisOutlineDefaultPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -80,6 +89,7 @@ Shader "Iris/IrisOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
+            #define IrisShader_BRP
             #define Use_IrisOutlineForwardPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
@@ -94,6 +104,7 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
+            #define IrisShader_BRP
             #define Use_IrisOutlineShadowPass
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL

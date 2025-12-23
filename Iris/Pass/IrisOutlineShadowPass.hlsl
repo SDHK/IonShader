@@ -16,13 +16,13 @@
 //#include "Lighting.cginc"
 //#include "AutoLight.cginc"
 
-struct ShadowVertData
+struct VertData
 {
     Var_PositionOS
     Var_Normal
 };
 
-struct ShadowFragData
+struct FragData
 {
     Var_PositionCS
     Var_T0(float3,LightVector3)
@@ -32,19 +32,16 @@ struct ShadowFragData
 float4 _Color;
 float _Scale;
 
-ShadowFragData vert(ShadowVertData vertData)
+FragData vert(VertData vertData)
 {
-    ShadowFragData fragData;
-
+    FragData fragData;
     fragData.PositionCS = Iris_ShadowCasterPositionCS(vertData.PositionOS, vertData.Normal); 
     fragData.LightVector3 = Iris_ShadowCasterVector(vertData.PositionOS);
     return fragData;
 }
 
 
-half4 frag(ShadowFragData fragData) : SV_Target
+half4 frag(FragData fragData) : SV_Target
 {
-    //SHADOW_CASTER_FRAGMENT(fragData)
-  return (length(fragData.LightVector3) + unity_LightShadowBias.x) * _LightPositionRange.w;
-
+    return Iris_ShadowCasterFragment(fragData.LightVector3);
 }
