@@ -6,8 +6,8 @@
 * 描述： Iris 宏定义规范集，给内部工具文件使用
 
 */
-#ifndef Def_IrisMacro
-#define Def_IrisMacro
+#ifndef Def_IrisBind
+#define Def_IrisBind
 
 //===[引入常量定义集]===
 #include "IrisConst.hlsl"
