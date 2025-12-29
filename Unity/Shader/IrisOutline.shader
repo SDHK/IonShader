@@ -37,7 +37,6 @@ Shader "Iris/IrisOutline"
             ZWrite On
             ZTest LEqual
             Blend Off            // 强制不混合
-
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
             #define Use_IrisOutlineForwardPass
@@ -75,6 +74,7 @@ Shader "Iris/IrisOutline"
             #include "../IrisEntryUnity.hlsl"
             ENDHLSL
         }
+
         // ===[简单渲染]===
         Pass
         {
@@ -104,6 +104,5 @@ Shader "Iris/IrisOutline"
             ENDHLSL
         }
     }
-    // Fallback "Universal Render Pipeline/Lit"
-    FallBack "Diffuse"
+    //FallBack "Diffuse"
 }

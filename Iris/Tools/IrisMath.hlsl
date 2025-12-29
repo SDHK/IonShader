@@ -9,7 +9,7 @@
 #ifndef Def_IrisMath
 #define Def_IrisMath
 
-#include "../Macro/IrisParams.hlsl"
+#include "../Bind/IrisParams.hlsl"
 
 //根据角度计算半径为的圆上的点 0~1
 float2 Iris_AngleToUV(float angle)

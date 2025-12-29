@@ -37,7 +37,7 @@
 #ifndef Def_IrisMatrix
 #define Def_IrisMatrix
 
-#include "../Macro/IrisParams.hlsl"
+#include "../Bind/IrisParams.hlsl"
 
 // 归一化一个三维向量，避免除以零
 float3 Iris_SafeNormalize(float3 inVec)

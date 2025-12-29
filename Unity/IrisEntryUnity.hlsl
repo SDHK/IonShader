@@ -35,13 +35,13 @@
 #define Inc_ShaderAutoLight "AutoLight.cginc"
 #endif
 
-//===[注入 Unity 参数映射]===
-#define Inc_IrisParams "../Unity/Macro/IrisParamsUnity.hlsl"
-//===[注入 Untiy 方法映射]===
-#define Inc_IrisMethod "../Unity/Macro/IrisMethodUnity.hlsl"
+
+//====[注入 Unity 绑定]===
+#define Inc_IrisBind "../Unity/Bind/IrisBindUnity.hlsl"
 
 //===[加载 Iris Shader 库入口]===
 #include "../Iris/IrisEntryPass.hlsl"
 #include "../Iris/IrisEntry.hlsl"
+
 
 #endif

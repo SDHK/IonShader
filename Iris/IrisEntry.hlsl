@@ -33,25 +33,16 @@
 #endif
 
 
-
 //===[Iris库引用]===
 
 //===[引入常量定义集]===
-#include "Macro/IrisConst.hlsl"
+#include "Bind/IrisConst.hlsl"
 //===[引入结构体字段定义]===
-#include "Macro/IrisStruct.hlsl"
+#include "Bind/IrisStruct.hlsl"
 
-//===[引入参数接口规范]===
-#ifdef Inc_IrisParams
-#include Inc_IrisParams //如果外部定义了，则使用外部定义
-#else
-#include "Macro/IrisParams.hlsl"
-#endif
-//===[引入方法接口规范]===
-#ifdef Inc_IrisMethod
-#include Inc_IrisMethod //如果外部定义了，则使用外部定义
-#else
-#include "Macro/IrisMethod.hlsl"
+//===[引入外部绑定]===
+#ifdef Inc_IrisBind
+#include Inc_IrisBind //如果外部定义了，则使用外部定义
 #endif
 
 //===[可选引用]===
