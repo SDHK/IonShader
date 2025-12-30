@@ -10,7 +10,7 @@
 #define Def_IrisVertex
 
 //#define IrisShader
-#include "../Bind/IrisParams.hlsl"
+#include "../Bind/IrisParam.hlsl"
 
 //// 顶点沿法线方向缩放
 //float4 VertScale(float4 position ,float3 normal,  float scale)

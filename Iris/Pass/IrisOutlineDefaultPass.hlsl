@@ -18,13 +18,13 @@
 
 struct VertData
 {
-    Var_PositionOS
-    Var_Normal
+    IrisVar_PositionOS
+    IrisVar_Normal
 };
 
 struct FragData
 {
-    Var_PositionCS
+    IrisVar_PositionCS
 };
             
 float4 _Color;
@@ -36,7 +36,7 @@ FragData vert(VertData vertData)
     FragData fragData;
 
     float3 position3 = vertData.PositionOS.xyz + vertData.Normal * _Scale;
-    fragData.PositionCS = mul(Iris_Matrix_MVP,float4( position3,1));
+    fragData.PositionCS = mul(IrisParam_Matrix_MVP,float4( position3,1));
     return fragData;
 }
             

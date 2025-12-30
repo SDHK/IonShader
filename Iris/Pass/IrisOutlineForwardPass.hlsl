@@ -22,17 +22,17 @@
 
 struct VertData
 {
-    Var_PositionOS
-    Var_Normal
-    Var_T0(float2, UV)
+    IrisVar_PositionOS
+    IrisVar_Normal
+    IrisVar_T0(float2, UV)
 };
 
 struct FragData
 {
     float4 pos : SV_POSITION;
-    Var_T0(float2, UV)
-    Var_T1(float3, NormalWS)
-    Var_T2(float3, PositionWS)
+    IrisVar_T0(float2, UV)
+    IrisVar_T1(float3, NormalWS)
+    IrisVar_T2(float3, PositionWS)
     Iris_ShadowCoords(3)
 };
 
@@ -42,14 +42,13 @@ FragData vert(VertData vertData)
     FragData fragData;
     
     // 计算世界空间位置
-    fragData.pos = Iris_ObjectToClip(vertData.PositionOS);
+    fragData.pos = IrisMatrix_ObjectToClip(vertData.PositionOS);
     fragData.UV = Iris_Transform_TEX(vertData.UV, _MainTex);
 
     // 将法线转换到世界空间（使用法线专用函数）
-    float3 normalWS = Iris_ObjectToWorldNormal(vertData.Normal);
-    fragData.NormalWS = normalWS;
+    fragData.NormalWS = IrisMatrix_ObjectToWorldNormal(vertData.Normal);
     // 计算世界空间位置
-    fragData.PositionWS = Iris_ObjectToWorld(vertData.PositionOS);
+    fragData.PositionWS = IrisMatrix_ObjectToWorld(vertData.PositionOS);
 
     // 统一的阴影坐标传递（兼容URP和BRP）
     Iris_TransferShadow(fragData, fragData.PositionWS);
@@ -63,14 +62,14 @@ half4 frag(FragData fragData) : SV_Target
 
     // 获取主光源信息并计算阴影（统一接口，自动适配URP/BRP）
     float4 shadowCoord = Iris_TransfromWorldToShadowCoord(fragData.PositionWS,fragData._ShadowCoord);
-    Iris_Light mainLight = Iris_GetMainLight(shadowCoord);
+    IrisStruct_Light mainLight = Iris_GetMainLight(shadowCoord);
 
     // 计算简单的 Lambert 光照
     float NdotL = saturate(dot(normalize(fragData.NormalWS), mainLight.Direction));
 
     // 应用阴影衰减到光照
     half3 directLighting = mainLight.Color.rgb * NdotL * mainLight.ShadowAttenuation;
-    float3 lighting = directLighting + Iris_AmbientSky.rgb;
+    float3 lighting = directLighting + IrisParam_AmbientSky.rgb;
 
     // 应用光照
     mainTex.rgb *= lighting;

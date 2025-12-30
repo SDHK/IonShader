@@ -14,7 +14,7 @@
 //===[引入结构体字段定义]===
 #include "IrisStruct.hlsl"
 //===[引入参数接口规范]===
-#include "IrisParams.hlsl"
+#include "IrisParam.hlsl"
 //===[引入方法接口规范]===
 #include "IrisMethod.hlsl"
 

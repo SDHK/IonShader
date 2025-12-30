@@ -13,19 +13,17 @@
 
 #define Use_IrisMatrix
 #include "../IrisEntry.hlsl"
-//#include "Lighting.cginc"
-//#include "AutoLight.cginc"
 
 struct VertData
 {
-    Var_PositionOS
-    Var_Normal
+    IrisVar_PositionOS
+    IrisVar_Normal
 };
 
 struct FragData
 {
-    Var_PositionCS
-    Var_T0(float3,LightVector3)
+    IrisVar_PositionCS
+    IrisVar_T0(float3,LightVector3)
 
 };
 
@@ -35,13 +33,13 @@ float _Scale;
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    fragData.PositionCS = Iris_ShadowCasterPositionCS(vertData.PositionOS, vertData.Normal); 
-    fragData.LightVector3 = Iris_ShadowCasterVector(vertData.PositionOS);
+    fragData.PositionCS = IrisShadowCaster_PositionCS(vertData.PositionOS, vertData.Normal); 
+    fragData.LightVector3 = IrisShadowCaster_Vector(vertData.PositionOS);
     return fragData;
 }
 
 
 half4 frag(FragData fragData) : SV_Target
 {
-    return Iris_ShadowCasterFragment(fragData.LightVector3);
+    return IrisShadowCaster_Fragment(fragData.LightVector3);
 }

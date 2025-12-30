@@ -17,7 +17,7 @@
 //转换纹理 float2,float4x4
 #define Iris_Transform_TEX(uv, mainTex)
 
-//获取光照信息 Iris_Light
+//获取光照信息 IrisStruct_Light
 #define Iris_GetMainLight()
 
 #endif

@@ -23,12 +23,12 @@
 #ifdef Use_ShaderLighting
 
 //BRP获取主光源信息
-Iris_Light Iris_GetMainLight()
+IrisStruct_Light Iris_GetMainLight()
 {
-    Iris_Light light;
+    IrisStruct_Light light;
     
     // BRP中 _WorldSpaceLightPos0.w = 0 表示方向光，w = 1 表示点光源
-    float4 lightPos = Iris_WorldSpaceLightPos0;
+    float4 lightPos = IrisParam_WorldSpaceLightPos0;
     
     // 判断光源类型并计算方向
     if (lightPos.w == 0.0)
@@ -47,8 +47,8 @@ Iris_Light Iris_GetMainLight()
     }
     
     // BRP中 _LightColor0 的 RGB 是颜色，A 是强度
-    //light.Color = Iris_LightColor0.rgb * Iris_LightColor0.a;
-    light.Color = Iris_LightColor0;
+    //light.Color = IrisParam_LightColor0.rgb * IrisParam_LightColor0.a;
+    light.Color = IrisParam_LightColor0;
 
     // BRP中阴影衰减需要采样阴影贴图，这里默认设为1.0
     // 如果需要阴影，需要额外实现阴影采样函数
@@ -63,9 +63,9 @@ Iris_Light Iris_GetMainLight()
 
 
 // BRP带参数的版本（支持阴影）
-Iris_Light Iris_GetMainLight(float4 shadowCoord)
+IrisStruct_Light Iris_GetMainLight(float4 shadowCoord)
 {
-    Iris_Light light = Iris_GetMainLight();
+    IrisStruct_Light light = Iris_GetMainLight();
     light.ShadowAttenuation =unitySampleShadow(shadowCoord);
     return light;
 }
@@ -92,26 +92,6 @@ float4 Iris_TransfromWorldToShadowCoord(float3 positionWS,float4 shadowCoord)
 #define Iris_TransferShadow(fragData, positionWS) TRANSFER_SHADOW(fragData)
 
 #endif  // Use_ShaderLighting
-
-//=== [阴影投射相关方法] ===
-
-// BRP阴影投射：需要手动处理
-float4 Iris_ShadowCasterPositionCS(float4 positionOS, float3 normalOS)
-{
-    float4 positionCS = UnityClipSpaceShadowCasterPos(positionOS, normalOS);
-    return UnityApplyLinearShadowBias(positionCS);
-}
-// 计算从光源位置到顶点的向量（用于距离衰减）
-float3 Iris_ShadowCasterVector(float4 positionOS)
-{
-    float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
-    return worldPos - _LightPositionRange.xyz;
-}
-// 计算阴影衰减（基于距离）
-half Iris_ShadowCasterFragment(float3 vec)
-{
-    return (length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w;
-}
 
 #endif
 

@@ -8,7 +8,7 @@
 * 设计理念：
 * - 本文件定义了统一的参数接口规范
 * - 不同引擎需要按照此规范实现对应的参数映射文件
-* - 所有环境参数使用 Iris_ 前缀，保持命名空间统一
+* - 所有环境参数使用 IrisParam_ 前缀，保持命名空间统一
 * 
 * 实现要求：
 * 1. 每个 #define 必须映射到对应引擎的内置变量
@@ -17,131 +17,131 @@
 *
 */
 
-#ifndef Def_IrisParams
-#define Def_IrisParams
+#ifndef Def_IrisParam
+#define Def_IrisParam
 
 
 //如果没有定义，则提供默认空实现，避免编译错误
-#ifndef Inc_IrisParams
+#ifndef Inc_IrisParam
    
 //===[相机]===
 
 //float3 世界空间中的相机位置。
-#define Iris_WorldSpaceCameraPos Iris_Float3_Zero
+#define IrisParam_WorldSpaceCameraPos IrisConst_Float3_Zero
 //float4 投影参数
-#define Iris_ProjectionParams Iris_Float4_Zero
+#define IrisParam_ProjectionParams IrisConst_Float4_Zero
 //float4 屏幕参数
-#define Iris_ScreenParams Iris_Float4_Zero
+#define IrisParam_ScreenParams IrisConst_Float4_Zero
 //float4 Z缓存参数
-#define Iris_ZBufferParams Iris_Float4_Zero
+#define IrisParam_ZBufferParams IrisConst_Float4_Zero
 //float4 正交参数
-#define Iris_OrthoParams Iris_Float4_Zero
+#define IrisParam_OrthoParams IrisConst_Float4_Zero
 //float4 相机投影参数
-#define Iris_CameraProjectionParams Iris_Float4_Zero 
+#define IrisParam_CameraProjectionParams IrisConst_Float4_Zero 
 
 //===[矩阵]===
 
 //float4x4 模型视图投影矩阵
-#define Iris_Matrix_MVP Iris_Float4x4_Identity
+#define IrisParam_Matrix_MVP IrisConst_Float4x4_Identity
 //float4x4 模型视图投影矩阵的逆矩阵
-#define Iris_Matrix_I_MVP Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_MVP IrisConst_Float4x4_Identity
 //float4x4 模型视图矩阵
-#define Iris_Matrix_MV Iris_Float4x4_Identity
+#define IrisParam_Matrix_MV IrisConst_Float4x4_Identity
 //float4x4 模型视图矩阵的逆矩阵
-#define Iris_Matrix_I_MV Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_MV IrisConst_Float4x4_Identity
 //float4x4 视图投影矩阵
-#define Iris_Matrix_VP Iris_Float4x4_Identity
+#define IrisParam_Matrix_VP IrisConst_Float4x4_Identity
 //float4x4 视图投影矩阵的逆矩阵
-#define Iris_Matrix_I_VP Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_VP IrisConst_Float4x4_Identity
 //float4x4 模型矩阵
-#define Iris_Matrix_M Iris_Float4x4_Identity
+#define IrisParam_Matrix_M IrisConst_Float4x4_Identity
 //float4x4 模型矩阵的逆矩阵
-#define Iris_Matrix_I_M Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_M IrisConst_Float4x4_Identity
 //float4x4 模型矩阵的逆转置（用于法线转换）
-// 注意：默认实现中，法线转换在 Iris_ObjectToWorldNormal() 函数中处理
-#define Iris_Matrix_IT_M Iris_Float4x4_Identity
+// 注意：默认实现中，法线转换在 IrisMatrix_ObjectToWorldNormal() 函数中处理
+#define IrisParam_Matrix_IT_M IrisConst_Float4x4_Identity
 //float4x4 视图矩阵
-#define Iris_Matrix_V Iris_Float4x4_Identity
+#define IrisParam_Matrix_V IrisConst_Float4x4_Identity
 //float4x4 视图矩阵的逆矩阵
-#define Iris_Matrix_I_V Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_V IrisConst_Float4x4_Identity
 //float4x4 投影矩阵
-#define Iris_Matrix_P Iris_Float4x4_Identity
+#define IrisParam_Matrix_P IrisConst_Float4x4_Identity
 //float4x4 投影矩阵的逆矩阵
-#define Iris_Matrix_I_P Iris_Float4x4_Identity
+#define IrisParam_Matrix_I_P IrisConst_Float4x4_Identity
 
 //float4x4 模型视图矩阵的转置
-#define Iris_Matrix_T_MV Iris_Float4x4_Identity
+#define IrisParam_Matrix_T_MV IrisConst_Float4x4_Identity
 //float4x4 模型视图矩阵的逆转置
-#define Iris_Matrix_IT_MV Iris_Float4x4_Identity
+#define IrisParam_Matrix_IT_MV IrisConst_Float4x4_Identity
 
 //===[时间]===
 
 //float4 当前时间。x:时间/20，y:时间，z:时间x2，w:时间x3
-#define Iris_Time Iris_Float4_Zero 
+#define IrisParam_Time IrisConst_Float4_Zero 
 //float4 正弦时间。x:sin(时间)，y:sin(时间/20)，z:sin(时间/200)，w:sin(时间x2)
-#define Iris_SinTime Iris_Float4_Zero
+#define IrisParam_SinTime IrisConst_Float4_Zero
 //float4 余弦时间。x:cos(时间)，y:cos(时间/20)，z:cos(时间/200)，w:cos(时间x2)
-#define Iris_CosTime Iris_Float4_Zero
+#define IrisParam_CosTime IrisConst_Float4_Zero
 //float4 上一帧的时间间隔。x:帧间隔时间，y:帧间隔时间/20，z:帧间隔时间/200，w:帧间隔时间x2
-#define Iris_DeltaTime Iris_Float4_Zero
+#define IrisParam_DeltaTime IrisConst_Float4_Zero
 
 //===[光照]===
 
 //float4 天空环境光颜色（RGB）和强度（A）
-#define Iris_AmbientSky Iris_Float4_Zero
+#define IrisParam_AmbientSky IrisConst_Float4_Zero
 //float4 赤道环境光颜色（RGB）和强度（A）
-#define Iris_AmbientEquator Iris_Float4_Zero
+#define IrisParam_AmbientEquator IrisConst_Float4_Zero
 //float4 地面环境光颜色（RGB）和强度（A）
-#define Iris_AmbientGround Iris_Float4_Zero
+#define IrisParam_AmbientGround IrisConst_Float4_Zero
 //float4 主光源位置/方向（世界空间）。xyz:位置/方向，w:0=方向光，1=点光源
-#define Iris_WorldSpaceLightPos0 Iris_Float4_Zero
+#define IrisParam_WorldSpaceLightPos0 IrisConst_Float4_Zero
 //float4 主光源颜色（RGB）和强度（A）
-#define Iris_LightColor0 Iris_Float4_Zero
+#define IrisParam_LightColor0 IrisConst_Float4_Zero
 
 //===[多光源]===
 
 //float4 4个光源的X坐标
-#define Iris_4LightPosX0 Iris_Float4_Zero
+#define IrisParam_4LightPosX0 IrisConst_Float4_Zero
 //float4 4个光源的Y坐标
-#define Iris_4LightPosY0 Iris_Float4_Zero
+#define IrisParam_4LightPosY0 IrisConst_Float4_Zero
 //float4 4个光源的Z坐标
-#define Iris_4LightPosZ0 Iris_Float4_Zero
+#define IrisParam_4LightPosZ0 IrisConst_Float4_Zero
 //float4 4个光源的衰减系数
-#define Iris_4LightAtten0 Iris_Float4_Zero
+#define IrisParam_4LightAtten0 IrisConst_Float4_Zero
 
 //===[球谐光照]===
 
 //float4 球谐函数 R 通道系数（常数项）
-#define Iris_SHAr Iris_Float4_Zero
+#define IrisParam_SHAr IrisConst_Float4_Zero
 //float4 球谐函数 G 通道系数（常数项）
-#define Iris_SHAg Iris_Float4_Zero
+#define IrisParam_SHAg IrisConst_Float4_Zero
 //float4 球谐函数 B 通道系数（常数项）
-#define Iris_SHAb Iris_Float4_Zero
+#define IrisParam_SHAb IrisConst_Float4_Zero
 //float4 球谐函数 R 通道系数（线性项）
-#define Iris_SHBr Iris_Float4_Zero
+#define IrisParam_SHBr IrisConst_Float4_Zero
 //float4 球谐函数 G 通道系数（线性项）
-#define Iris_SHBg Iris_Float4_Zero
+#define IrisParam_SHBg IrisConst_Float4_Zero
 //float4 球谐函数 B 通道系数（线性项）
-#define Iris_SHBb Iris_Float4_Zero
+#define IrisParam_SHBb IrisConst_Float4_Zero
 //float4 球谐函数系数（二次项）
-#define Iris_SHC Iris_Float4_Zero
+#define IrisParam_SHC IrisConst_Float4_Zero
 
 //===[阴影]===
 
 //float4 级联阴影分割半径的平方
-#define Iris_ShadowSplitSqRadii Iris_Float4_Zero
+#define IrisParam_ShadowSplitSqRadii IrisConst_Float4_Zero
 //float4 光源阴影偏移
-#define Iris_LightShadowBias Iris_Float4_Zero
+#define IrisParam_LightShadowBias IrisConst_Float4_Zero
 
 //===[雾效]===
 
 //float4 雾的颜色（RGB）和强度（A）
-#define Iris_FogColor Iris_Float4_Zero
+#define IrisParam_FogColor IrisConst_Float4_Zero
 //float4 雾的参数。x:密度，y:起始距离，z:结束距离，w:其他参数
-#define Iris_FogParams Iris_Float4_Zero
-
+#define IrisParam_FogParams IrisConst_Float4_Zero
 
 
 #endif
 
 #endif
+

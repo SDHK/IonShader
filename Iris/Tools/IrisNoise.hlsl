@@ -12,7 +12,7 @@
 #include "IrisHash.hlsl" //引用Hash库
 
 
-float3 Iris_NoiseRandom3(float3 c)
+float3 IrisNoise_Random3(float3 c)
 {
     float j = 4096.0 * sin(dot(c, float3(17.0, 59.4, 15.0)));
     float3 r;
@@ -24,7 +24,7 @@ float3 Iris_NoiseRandom3(float3 c)
     return r - 0.5;
 }
 
-float2 Iris_NoiseRandom2(float2 c)
+float2 IrisNoise_Random2(float2 c)
 {
     float j = 4096.0 * sin(dot(c, float2(17.0, 59.4)));
     float2 r;
@@ -34,7 +34,7 @@ float2 Iris_NoiseRandom2(float2 c)
     return r - 0.5;
 }
 
-float Iris_NoiseRandom(float c)
+float IrisNoise_Random(float c)
 {
     float j = 4096.0 * sin(dot(c, 17.0));
     float r;
@@ -44,19 +44,19 @@ float Iris_NoiseRandom(float c)
 }
 
 //一维噪声
-float Iris_Noise1D(float x)
+float IrisNoise_1D(float x)
 {
     return frac(sin(x) * 1000);
 }
 
 //栅格噪声
-float Iris_NoiseGrid(float x)
+float IrisNoise_Grid(float x)
 {
     return noise(floor(x));
 }
 
 //平滑噪声
-float Iris_NoiseLerp(float x)
+float IrisNoise_Lerp(float x)
 {
     float t = frac(x);
     float u = t * t * (3 - 2 * t);
@@ -67,13 +67,13 @@ float Iris_NoiseLerp(float x)
 
 
 //白噪声
-float Iris_NoiseWhite(float2 uv, float time = 0)
+float IrisNoise_White(float2 uv, float time = 0)
 {
     return frac(sin(dot(uv, float2(12.9898, 78.233) + time)) * 43758.5453123);
 }
 
 //值噪声
-float Iris_NoiseValue(float2 uv)
+float IrisNoise_Value(float2 uv)
 {
     // 将时间参数引入到 uv 的计算中
     float2 intPos = floor(uv); // uv 晶格化, 取 uv 整数值，相当于晶格id
@@ -84,10 +84,10 @@ float Iris_NoiseValue(float2 uv)
     float2 u = fracPos * fracPos * (3.0 - 2.0 * fracPos);
 
     // 四方取点，由于 intPos 是固定的，所以栅格化了（同一晶格内四点值相同，只是小数部分不同拿来插值）
-    float va = Iris_Hash2to1(intPos + float2(0.0, 0.0)); // Hash2to1 二维输入，映射到 1 维输出
-    float vb = Iris_Hash2to1(intPos + float2(1.0, 0.0));
-    float vc = Iris_Hash2to1(intPos + float2(0.0, 1.0));
-    float vd = Iris_Hash2to1(intPos + float2(1.0, 1.0));
+    float va = IrisHash_2to1(intPos + float2(0.0, 0.0)); // Hash2to1 二维输入，映射到 1 维输出
+    float vb = IrisHash_2to1(intPos + float2(1.0, 0.0));
+    float vc = IrisHash_2to1(intPos + float2(0.0, 1.0));
+    float vd = IrisHash_2to1(intPos + float2(1.0, 1.0));
 
     // lerp 的展开形式，完全可以用 lerp(a, b, c) 嵌套实现
     float k0 = va;
@@ -101,17 +101,17 @@ float Iris_NoiseValue(float2 uv)
 
 
 //柏林噪声
-float Iris_NoisePerlin(float2 uv)
+float IrisNoise_Perlin(float2 uv)
 {
     float2 intPos = floor(uv);
     float2 fracPos = frac(uv);
 
     float2 u = fracPos * fracPos * (3.0 - 2.0 * fracPos);
 
-    float2 ga = Iris_Hash22(intPos + float2(0.0, 0.0)); //四角Hash向量
-    float2 gb = Iris_Hash22(intPos + float2(1.0, 0.0));
-    float2 gc = Iris_Hash22(intPos + float2(0.0, 1.0));
-    float2 gd = Iris_Hash22(intPos + float2(1.0, 1.0));
+    float2 ga = IrisHash_22(intPos + float2(0.0, 0.0)); //四角Hash向量
+    float2 gb = IrisHash_22(intPos + float2(1.0, 0.0));
+    float2 gc = IrisHash_22(intPos + float2(0.0, 1.0));
+    float2 gd = IrisHash_22(intPos + float2(1.0, 1.0));
 
     float va = dot(ga, fracPos - float2(0.0, 0.0)); //方向向量、点积
     float vb = dot(gb, fracPos - float2(1.0, 0.0));
@@ -124,7 +124,7 @@ float Iris_NoisePerlin(float2 uv)
 }
 
 //简单噪声
-float Iris_NoiseSimple(float2 uv, float time = 0)
+float IrisNoise_Simple(float2 uv, float time = 0)
 {
     const float K1 = 0.366025404; // (sqrt(3)-1)/2;
     const float K2 = 0.211324865; // (3-sqrt(3))/6;
@@ -136,14 +136,14 @@ float Iris_NoiseSimple(float2 uv, float time = 0)
     float2 b = a - o + K2;
     float2 c = a - 1.0 + 2.0 * K2;
     float3 h = max(0.5 - float3(dot(a, a), dot(b, b), dot(c, c)), 0.0); // 使用 float3 替换 vec3
-    float3 n = h * h * h * h * float3(dot(a, Iris_Hash22(i)), dot(b, Iris_Hash22(i + o)), dot(c, Iris_Hash22(i + 1.0))); // 使用 float3 替换 vec3
+    float3 n = h * h * h * h * float3(dot(a, IrisHash_22(i)), dot(b, IrisHash_22(i + o)), dot(c, IrisHash_22(i + 1.0))); // 使用 float3 替换 vec3
     return dot(float3(70.0, 70.0, 70.0), n); // 使用 float3 替换 vec3
 }
 
 
 
 //泰森多边形
-float Iris_NoiseVoronoi(float2 uv, float time = 0)
+float IrisNoise_Voronoi(float2 uv, float time = 0)
 {
     float dist= 16;
     float2 intPos = floor(uv); //取整
@@ -153,7 +153,7 @@ float Iris_NoiseVoronoi(float2 uv, float time = 0)
         for (int y = -1; y <= 1; y++)
         {
             float2 offset = float2(x, y); //周围的偏移
-            float2 pos = Iris_Hash22(intPos + offset); //生成随机特征点
+            float2 pos = IrisHash_22(intPos + offset); //生成随机特征点
             pos = sin(time + 6.2831 * pos) * 0.5 + 0.5; //特征点随时间变化
             float d = distance(pos + float2(x, y), fracPos); //fracPos作为采样点，Hash22(intPos)作为生成点，来计算dist
             dist = min(dist, d);
@@ -164,7 +164,7 @@ float Iris_NoiseVoronoi(float2 uv, float time = 0)
 
 
 //泰森多边形
-float Iris_NoiseWorley(float2 uv, float time = 0)
+float IrisNoise_Worley(float2 uv, float time = 0)
 {
     float2 index = floor(uv);
     float2 fracPos = frac(uv);
@@ -172,7 +172,7 @@ float Iris_NoiseWorley(float2 uv, float time = 0)
     for (int i = -1; i < 2; i++)
         for (int j = -1; j < 2; j++)
         {
-            float2 pos = Iris_Hash22(index + float2(i, j));
+            float2 pos = IrisHash_22(index + float2(i, j));
             pos = sin(time + 6.2831 * pos) * 0.5 + 0.5; //特征点随时间变化
             float dist = distance(pos + float2(i, j), fracPos);
             if (dist < d.x)
@@ -187,7 +187,7 @@ float Iris_NoiseWorley(float2 uv, float time = 0)
 }
 
 //分形布朗运动
-float Iris_NoiseFBMvalue(float2 uv)
+float IrisNoise_FBMvalue(float2 uv)
 {
     float value = 0;
     float amplitude = 0.5;
@@ -195,7 +195,7 @@ float Iris_NoiseFBMvalue(float2 uv)
 
     for (int i = 0; i < 8; i++)
     {
-        value += amplitude * Iris_NoiseValue(uv); //使用最简单的value噪声做分形，其余同理。
+        value += amplitude * IrisNoise_Value(uv); //使用最简单的value噪声做分形，其余同理。
         uv *= 2.0;
         amplitude *= .5;
     }
@@ -209,20 +209,20 @@ float Iris_NoiseFBMvalue(float2 uv)
 // scale: 缩放
 // dir: 扰动方向
 // 返回值: 生成的云雾噪声值,当色彩权重用
-float Iris_NoiseSmoke(float2 uv, float time = 0, float uvSpeed=10, float scale =1, float2 dir = float2(0.0, 0.10))
+float IrisNoise_Smoke(float2 uv, float time = 0, float uvSpeed=10, float scale =1, float2 dir = float2(0.0, 0.10))
 {
     float2 q = float2(0.0, 0.0);
     uv += dir * time * uvSpeed;
     //水面流动效果
-    q.x = Iris_NoiseFBMvalue(uv + time * dir);
-    q.y = Iris_NoiseFBMvalue(uv + float2(1.0, 0.0));
+    q.x = IrisNoise_FBMvalue(uv + time * dir);
+    q.y = IrisNoise_FBMvalue(uv + float2(1.0, 0.0));
 
     //云雾细节效果
     float2 r = float2(0.0, 0.0);
-    r.x = Iris_NoiseFBMvalue(uv + q * scale + time * dir ); // + float2(1.7, 9.2)
-    r.y = Iris_NoiseFBMvalue(uv + q * scale + time * dir ); // + float2(8.3, 2.8)
+    r.x = IrisNoise_FBMvalue(uv + q * scale + time * dir ); // + float2(1.7, 9.2)
+    r.y = IrisNoise_FBMvalue(uv + q * scale + time * dir ); // + float2(8.3, 2.8)
     
-    float f = Iris_NoiseFBMvalue(uv + r);
+    float f = IrisNoise_FBMvalue(uv + r);
     return (f * f * f + 0.6 * f * f + 0.5 * f);
 }
 
@@ -230,7 +230,7 @@ float Iris_NoiseSmoke(float2 uv, float time = 0, float uvSpeed=10, float scale =
 // _MainTex: 输入的纹理
 // uv: 输入的UV坐标
 // blur: 模糊的程度
-float4 Iris_NoiseBlurGaussian(sampler2D _MainTex, float2 uv, float blur)
+float4 IrisNoise_BlurGaussian(sampler2D _MainTex, float2 uv, float blur)
 {
     // 1 / 16
     float offset = blur * 0.0625f;

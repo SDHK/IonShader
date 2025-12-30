@@ -9,10 +9,10 @@
 #ifndef Def_IrisMath
 #define Def_IrisMath
 
-#include "../Bind/IrisParams.hlsl"
+#include "../Bind/IrisParam.hlsl"
 
 //根据角度计算半径为的圆上的点 0~1
-float2 Iris_AngleToUV(float angle)
+float2 IrisMath_AngleToUV(float angle)
 {
     angle %= 360;
     return frac(float2(cos(angle) + 1, sin(angle) + 1) * 0.5);
@@ -27,7 +27,7 @@ float2 Iris_AngleToUV(float angle)
 
 //钳制映射
 //将value从min-max映射到targetMin-targetMax之间，并进行钳制
-float Iris_ClampMap(float value, float min, float max, float targetMin = 0, float targetMax = 1)
+float IrisMath_ClampMap(float value, float min, float max, float targetMin = 0, float targetMax = 1)
 {
     //假设要0.5到0.8之间的值，那么就用value-0.5，然后再减去0.8-0.5=0.3
     value -= min;
@@ -39,7 +39,7 @@ float Iris_ClampMap(float value, float min, float max, float targetMin = 0, floa
 }
 
 // 颜色映射
-float4 Iris_MapColor(float colorWeight, float4 colors[8], int colorCount = 8)
+float4 IrisMath_MapColor(float colorWeight, float4 colors[8], int colorCount = 8)
 {
     float step = 1.0 / (colorCount - 1); // 每段的权重范围
     for (int i = 0; i < colorCount - 1; i++)
@@ -48,14 +48,14 @@ float4 Iris_MapColor(float colorWeight, float4 colors[8], int colorCount = 8)
         float maxWeight = (i + 1) * step;
         if (colorWeight >= minWeight && colorWeight < maxWeight)
         {
-            return lerp(colors[i], colors[i + 1], Iris_ClampMap(colorWeight, minWeight, maxWeight));
+            return lerp(colors[i], colors[i + 1], IrisMath_ClampMap(colorWeight, minWeight, maxWeight));
         }
     }
     return colors[colorCount - 1]; // 超出范围返回最后一个颜色
 }
 
 // 沿法线方向缩放位置
-float3 Iris_Scale(float3 position,float3 normal,float scale)
+float3 IrisMath_Scale(float3 position,float3 normal,float scale)
 {
     return position + normal * scale;
 }

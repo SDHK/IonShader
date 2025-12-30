@@ -21,9 +21,9 @@
 
 //URP获取主光源信息
 // 无参数版本（无阴影支持）
-Iris_Light Iris_GetMainLight()
+IrisStruct_Light Iris_GetMainLight()
 {
-    Iris_Light light;
+    IrisStruct_Light light;
     Light urpLight = GetMainLight();
     light.Direction = urpLight.direction;
     light.Color = urpLight.color;
@@ -34,9 +34,9 @@ Iris_Light Iris_GetMainLight()
 }
 
 // 带阴影坐标的版本（优化版本，避免重复计算shadowCoord）
-Iris_Light Iris_GetMainLight(float4 shadowCoord)
+IrisStruct_Light Iris_GetMainLight(float4 shadowCoord)
 {
-    Iris_Light light;
+    IrisStruct_Light light;
     Light urpLight = GetMainLight(shadowCoord);
 
     //#if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
@@ -79,29 +79,6 @@ float4 Iris_TransfromWorldToShadowCoord(float3 positionWS,float4 shadowCoord)
 
 
 #endif  // Use_ShaderLighting
-
-
-//=== [阴影投射相关方法] ===
-
-// URP阴影投射：非常简单！
-float4 Iris_ShadowCasterPositionCS(float4 positionOS, float3 normalOS)
-{
-    float3 positionWS = TransformObjectToWorld(positionOS.xyz);
-    // URP自动处理阴影偏移，不需要手动调用UnityApplyLinearShadowBias
-    return TransformWorldToHClip(positionWS);
-}
-
-// URP不需要vec字段，但为了接口统一可以设为0
-float3 Iris_ShadowCasterVector(float4 positionOS)
-{
-    return 0; // URP不需要
-}
-
-// URP fragment shader只需要返回0
-half Iris_ShadowCasterFragment(float3 vec)
-{
-    return 0; // 深度信息已经在PositionCS中
-}
 
 
 #endif
