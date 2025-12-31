@@ -10,17 +10,8 @@
 #ifndef Def_IrisEntryPass
 #define Def_IrisEntryPass
 
-
-#ifdef Use_IrisOutlineDefaultPass
-    #include "Pass/IrisOutlineDefaultPass.hlsl"
-#endif
-
-#ifdef Use_IrisOutlineForwardPass
-    #include "Pass/IrisOutlineForwardPass.hlsl"
-#endif
-
-#ifdef Use_IrisOutlineShadowPass
-    #include "Pass/IrisOutlineShadowPass.hlsl"
-#endif
+//===[Pass 统一入口]===
+// Pass 文件统一入口（根据 Use_IrisXXXPass 宏控制是否生效）
+#include "Pass/IrisPasses.hlsl"
 
 #endif

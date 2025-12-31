@@ -7,10 +7,14 @@
 *
 */
 
+#ifdef Use_IrisOutlineShadowPass
+
 #pragma vertex vert
 #pragma fragment frag
 #pragma multi_compile_shadowcaster
 
+#define Use_IrisCore
+#define Use_IrisLight
 #define Use_IrisMatrix
 #include "../IrisEntry.hlsl"
 
@@ -43,3 +47,5 @@ half4 frag(FragData fragData) : SV_Target
 {
     return IrisShadowCaster_Fragment(fragData.LightVector3);
 }
+
+#endif // Use_IrisOutlineShadowPass

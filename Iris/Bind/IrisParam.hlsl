@@ -17,12 +17,10 @@
 *
 */
 
+#ifdef Use_IrisCore
+
 #ifndef Def_IrisParam
 #define Def_IrisParam
-
-
-//如果没有定义，则提供默认空实现，避免编译错误
-#ifndef Inc_IrisParam
    
 //===[相机]===
 

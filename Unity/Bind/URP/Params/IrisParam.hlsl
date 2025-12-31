@@ -7,6 +7,9 @@
 * 
 */
 
+#ifdef Use_IrisCore
+
+
 #ifndef Def_IrisParam
 #define Def_IrisParam
 
@@ -131,3 +134,4 @@
 
 #endif
 
+#endif // Use_IrisCore

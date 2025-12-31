@@ -6,7 +6,10 @@
 * 描述： 各种扭曲函数合集 
 
 */
-#ifndef Def_IrisDistort 
+#ifdef Use_IrisDistort
+
+
+#ifndef Def_IrisDistort
 #define Def_IrisDistort
 
 //极坐标扭曲 
@@ -101,5 +104,6 @@ float2 IrisDistort_Wave(float2 uv, float amplitude, float frequency, float phase
     return uv;
 }
 
-
 #endif
+
+#endif // Use_IrisDistort

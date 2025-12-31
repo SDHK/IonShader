@@ -6,6 +6,9 @@
 * 描述： 各种数学函数合集 
 
 */
+
+#ifdef Use_IrisMath
+
 #ifndef Def_IrisMath
 #define Def_IrisMath
 
@@ -60,7 +63,6 @@ float3 IrisMath_Scale(float3 position,float3 normal,float scale)
     return position + normal * scale;
 }
 
-
-
-
 #endif
+
+#endif // Use_IrisMath

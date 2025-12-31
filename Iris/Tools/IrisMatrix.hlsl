@@ -34,6 +34,8 @@
 
 */
 
+#ifdef Use_IrisMatrix
+
 #ifndef Def_IrisMatrix
 #define Def_IrisMatrix
 
@@ -158,5 +160,6 @@ float4 IrisMatrix_ClipToView(float4 pos)
     return mul(IrisParam_Matrix_I_P, pos);
 }
 
-
 #endif
+
+#endif // Use_IrisMatrix

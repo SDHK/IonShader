@@ -22,19 +22,8 @@
 
 #include "../../IrisConfig.hlsl"
 
-
-//===[注入 Shader 核心模块]===
-//===[URP]===
-#ifdef IrisShader_URP
-#define Inc_ShaderCore "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-#define Inc_ShaderLighting "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-//===[BRP]===
-#elif defined(IrisShader_BRP)
-#define Inc_ShaderCore "UnityCG.cginc"
-#define Inc_ShaderLighting "Lighting.cginc"
-#define Inc_ShaderAutoLight "AutoLight.cginc"
-#endif
-
+//===[注入基础库]===
+#define Inc_IrisBase "../Unity/Base/IrisBase.hlsl"
 
 //====[注入 Unity 绑定]===
 #define Inc_IrisBind "../Unity/Bind/IrisBindUnity.hlsl"

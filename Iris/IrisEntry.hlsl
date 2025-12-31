@@ -18,58 +18,29 @@
 #define Def_IrisEntry
 
 //===[环境库引用]===
-// 引用 Shader 核心模块
-#include Inc_ShaderCore
-
-//===[可选引用]===
-// 引用 Shader 光照模块
-#ifdef Use_ShaderLighting
-#include Inc_ShaderLighting
+// 引用基础库（根据 URP/BRP 自动选择）
+// 使用 Use_IrisCore 和 Use_IrisLight 宏控制是否包含
+#ifdef Inc_IrisBase
+#include Inc_IrisBase
 #endif
-
-// 引用 Shader 阴影模块（BRP需要）
-#ifdef Inc_ShaderAutoLight
-#include Inc_ShaderAutoLight
-#endif
-
 
 //===[Iris库引用]===
 
 //===[引入常量定义集]===
-#include "Bind/IrisConst.hlsl"
+#include "Base/IrisConst.hlsl"
 //===[引入结构体字段定义]===
-#include "Bind/IrisStruct.hlsl"
+#include "Base/IrisStruct.hlsl"
 
 //===[引入外部绑定]===
 #ifdef Inc_IrisBind
-#include Inc_IrisBind //如果外部定义了，则使用外部定义
+#include Inc_IrisBind 
+#else
+#include "Bind/IrisBind.hlsl"
 #endif
 
 //===[可选引用]===
-
-#ifdef Use_IrisVertex
-#include "Tools/IrisVertex.hlsl"
-#endif
-
-#ifdef Use_IrisDistort
-#include "Tools/IrisDistort.hlsl"
-#endif
-
-#ifdef Use_IrisHash
-#include "Tools/IrisHash.hlsl"
-#endif
-
-#ifdef Use_IrisMath
-#include "Tools/IrisMath.hlsl"
-#endif
-
-#ifdef Use_IrisNoise
-#include "Tools/IrisNoise.hlsl"
-#endif
-
-#ifdef Use_IrisMatrix
-#include "Tools/IrisMatrix.hlsl"
-#endif
+// 工具函数统一入口（根据 Use_IrisXXX 宏控制是否生效）
+#include "Tools/IrisTools.hlsl"
 
 
 #endif

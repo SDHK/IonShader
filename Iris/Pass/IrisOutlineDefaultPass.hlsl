@@ -3,14 +3,16 @@
 * 作者： 闪电黑客
 * 日期： 2025/12/10 20:38
 
-* 描述： 
+* 描述： Iris Outline 默认 Pass
 
 */
 
+#ifdef Use_IrisOutlineDefaultPass
 
 #pragma vertex vert
 #pragma fragment frag
 
+#define Use_IrisCore
 #define Use_IrisMatrix
 #define Use_IrisMath
 #define Use_IrisVertex
@@ -44,3 +46,5 @@ half4 frag(FragData fragData) : SV_Target
 {
     return _Color;
 }
+
+#endif // Use_IrisOutlineDefaultPass

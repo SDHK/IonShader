@@ -6,6 +6,8 @@
 * 描述： Iris 顶点工具函数 
 
 */
+#ifdef Use_IrisVertex
+
 #ifndef Def_IrisVertex
 #define Def_IrisVertex
 
@@ -27,5 +29,6 @@
 //    return mul(Iris_Matrix_MVP, position);
 //}
 
-
 #endif
+
+#endif // Use_IrisVertex

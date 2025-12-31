@@ -9,13 +9,11 @@
 #ifndef Def_IrisBind
 #define Def_IrisBind
 
-//===[引入常量定义集]===
-#include "IrisConst.hlsl"
-//===[引入结构体字段定义]===
-#include "IrisStruct.hlsl"
 //===[引入参数接口规范]===
 #include "IrisParam.hlsl"
-//===[引入方法接口规范]===
-#include "IrisMethod.hlsl"
+//===[引入核心方法接口规范]===
+#include "IrisCore.hlsl"
+//===[引入光照方法接口规范]===
+#include "IrisLight.hlsl"
 
 #endif
