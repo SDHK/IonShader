@@ -60,7 +60,9 @@ IrisStruct_Light IrisLight_MainLight()
 IrisStruct_Light IrisLight_MainLight(float4 shadowCoord)
 {
     IrisStruct_Light light = IrisLight_MainLight();
+#ifdef SHADOWS_SCREEN
     light.ShadowAttenuation = unitySampleShadow(shadowCoord);
+#endif
     return light;
 }
 
