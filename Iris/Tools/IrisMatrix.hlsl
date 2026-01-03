@@ -34,9 +34,7 @@
 
 */
 
-#ifdef Use_IrisMatrix
-
-#ifndef Def_IrisMatrix
+#if Def(IrisMatrix) 
 #define Def_IrisMatrix
 
 #include "../Bind/IrisParam.hlsl"
@@ -160,6 +158,4 @@ float4 IrisMatrix_ClipToView(float4 pos)
     return mul(IrisParam_Matrix_I_P, pos);
 }
 
-#endif
-
-#endif // Use_IrisMatrix
+#endif 

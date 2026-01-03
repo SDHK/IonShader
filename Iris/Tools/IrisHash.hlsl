@@ -6,9 +6,8 @@
 * 描述： 各种哈希函数合集 
 
 */
-#ifdef Use_IrisHash
 
-#ifndef Def_IrisHash
+#if Def(IrisHash) 
 #define Def_IrisHash
 
 float IrisHash_11(float p)
@@ -99,5 +98,3 @@ float2 IrisHash_2d2(float2 uv)
 }
 
 #endif
-
-#endif // Use_IrisHash

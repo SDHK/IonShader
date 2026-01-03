@@ -6,9 +6,7 @@
 * 描述： Iris 顶点工具函数 
 
 */
-#ifdef Use_IrisVertex
-
-#ifndef Def_IrisVertex
+#if Def(IrisVertex) 
 #define Def_IrisVertex
 
 //#define IrisShader
@@ -30,5 +28,3 @@
 //}
 
 #endif
-
-#endif // Use_IrisVertex

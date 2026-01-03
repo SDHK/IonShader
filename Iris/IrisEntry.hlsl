@@ -14,6 +14,10 @@
 *
 */
 
+// 模块包装宏（单行版本）
+#define Def(name) \
+defined(Use_##name) && !defined(Def_##name) || !defined(IrisShader)
+
 #ifndef Def_IrisEntry
 #define Def_IrisEntry
 

@@ -6,9 +6,8 @@
 * 描述： 各种噪声函数合集 
 
 */
-#ifdef Use_IrisNoise
 
-#ifndef Def_IrisNoise
+#if Def(IrisNoise) 
 #define Def_IrisNoise
 
 #include "IrisHash.hlsl" //引用Hash库
@@ -259,5 +258,3 @@ float4 IrisNoise_BlurGaussian(sampler2D _MainTex, float2 uv, float blur)
 }
 
 #endif
-
-#endif // Use_IrisNoise

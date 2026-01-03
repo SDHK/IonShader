@@ -7,6 +7,9 @@ Shader "Iris/IrisOutline"
         _Scale ("Outline Scale", Float) = 0.1
     }
     HLSLINCLUDE
+    #define IrisShader
+
+
     sampler2D _MainTex;
     float4 _MainTex_ST;
     ENDHLSL

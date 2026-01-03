@@ -7,9 +7,7 @@
 
 */
 
-#ifdef Use_IrisMath
-
-#ifndef Def_IrisMath
+#if Def(IrisMath) 
 #define Def_IrisMath
 
 #include "../Bind/IrisParam.hlsl"
@@ -64,5 +62,3 @@ float3 IrisMath_Scale(float3 position,float3 normal,float scale)
 }
 
 #endif
-
-#endif // Use_IrisMath
