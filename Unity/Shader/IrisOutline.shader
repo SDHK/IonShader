@@ -27,8 +27,8 @@ Shader "Iris/IrisOutline"
             ZWrite On  // 透明队列通常关闭深度写入
             ZTest LEqual
             HLSLPROGRAM
-            #define Use_IrisOutlineDefaultPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineDefault
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
 
         }
@@ -42,8 +42,8 @@ Shader "Iris/IrisOutline"
             Blend Off            // 强制不混合
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Use_IrisOutlineForwardPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineForward
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
         }
         // ===[阴影投射]===
@@ -56,8 +56,8 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Use_IrisOutlineShadowPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineShadow
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
         }
     }
@@ -73,8 +73,8 @@ Shader "Iris/IrisOutline"
             Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
-            #define Use_IrisOutlineDefaultPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineDefault
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
         }
 
@@ -88,8 +88,8 @@ Shader "Iris/IrisOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Use_IrisOutlineForwardPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineForward
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
         }
         // ===[阴影投射]===
@@ -102,8 +102,8 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Use_IrisOutlineShadowPass
-            #include "../IrisEntryUnity.hlsl"
+            #define Use_IrisPassOutlineShadow
+            #include "../Core/IrisCoreUnity.hlsl"
             ENDHLSL
         }
     }
