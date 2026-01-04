@@ -6,10 +6,8 @@
 * 描述： Unity引擎光照方法实现集（URP版本）
 * 
 */
-#ifdef Use_IrisLight
+#if Def(IrisLight)
 
-
-#ifndef Def_IrisLight
 #define Def_IrisLight
 
 
@@ -97,7 +95,4 @@ half IrisShadowCaster_Fragment(float3 vec)
 }
 
 #endif
-
-
-#endif // Use_IrisLight
 

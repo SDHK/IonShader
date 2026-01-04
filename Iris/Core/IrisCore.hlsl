@@ -25,30 +25,24 @@
 *
 */
 
-// 模块包装宏（单行版本）
-#define Def(name) \
-defined(Use_##name) && !defined(Def_##name) || !defined(IrisShader)
-
-// 模块链接宏（单行版本）
-#define Link(name) \
-defined(Use_##name) || !defined(IrisShader)
 
 #ifndef Def_IrisCore
 #define Def_IrisCore
 
+//===[引入核心宏定义]===
+#include "../IrisMacro.hlsl"
+
 //===[环境库引用]===
 // 引用基础库（根据 URP/BRP 自动选择）
 // 使用 Use_IrisBase 和 Use_IrisLight 宏控制是否链接
-#ifdef Inc_IrisBase
-#include Inc_IrisBase
+#ifdef Inc_IrisLibrary
+#include Inc_IrisLibrary
 #endif
 
 //===[Iris库引用]===
 
-//===[引入常量定义集]===
-#include "Base/IrisConst.hlsl"
-//===[引入结构体字段定义]===
-#include "Base/IrisStruct.hlsl"
+//===[引入定义]===
+#include "Define/IrisLinkDefine.hlsl"
 
 //===[引入外部绑定]===
 #ifdef Inc_IrisBind
@@ -61,6 +55,4 @@ defined(Use_##name) || !defined(IrisShader)
 // 工具函数统一入口（根据 Use_IrisXXX 宏控制是否链接）
 #include "Tools/IrisLinkTools.hlsl"
 
-
-#endif
-
+#endif // Def_IrisCore

@@ -7,9 +7,7 @@
 * 
 */
 
-#ifdef Use_IrisBase
-
-#ifndef Def_IrisBase
+#if Def(IrisBase)
 #define Def_IrisBase
 
 //===[定义Unity的方法宏]===
@@ -19,6 +17,3 @@
 
 
 #endif
-
-#endif 
-

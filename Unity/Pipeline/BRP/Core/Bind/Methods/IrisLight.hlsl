@@ -7,10 +7,7 @@
 * 
 */
 
-#ifdef Use_IrisLight
-
-
-#ifndef Def_IrisLight
+#if Def(IrisLight)
 #define Def_IrisLight
 
 
@@ -137,7 +134,3 @@ half IrisShadowCaster_Fragment(float3 vec)
 
 
 #endif
-
-
-#endif // Use_IrisLight
-

@@ -9,8 +9,8 @@
 *
 */
 
-#ifdef Use_IrisLight
+#if Def(IrisLight)
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-#endif // Use_IrisLight
+#endif // Def(IrisLight)

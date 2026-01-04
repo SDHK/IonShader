@@ -26,17 +26,14 @@
 *
 */
 
+#ifndef Def_IrisPass
+#define Def_IrisPass
 
-// 模块包装宏（单行版本）
-#define Def(name) \
-defined(Use_##name) && !defined(Def_##name) || !defined(IrisShader)
-
-// 模块链接宏（单行版本）
-#define Link(name) \
-defined(Use_##name)||!defined(IrisShader)
+//===[引入核心宏定义]===
+#include "../IrisMacro.hlsl"
 
 
-//===[Outline Pass]===
+//===[引入Pass库]===
 #if Link(IrisPassOutlineDefault)
 #include "IrisPassOutlineDefault.hlsl"   // 默认轮廓 Pass
 #endif
@@ -47,3 +44,4 @@ defined(Use_##name)||!defined(IrisShader)
 #include "IrisPassOutlineShadow.hlsl"    // 阴影投射 Pass
 #endif
 
+#endif // Def_IrisPass
