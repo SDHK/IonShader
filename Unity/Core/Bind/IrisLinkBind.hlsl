@@ -7,8 +7,8 @@
 *
 */
 #ifdef IrisShader_URP
-#include "URP/IrisLinkURP.hlsl"
+#include "URP/IrisLinkBindURP.hlsl"
 #elif defined(IrisShader_BRP)
-#include "BRP/IrisLinkBRP.hlsl"
+#include "BRP/IrisLinkBindBRP.hlsl"
 #endif
 

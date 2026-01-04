@@ -11,8 +11,8 @@
 
 //===[根据渲染管线选择基础库]===
 #ifdef IrisShader_URP
-#include "URP/IrisLinkBase.hlsl"
+#include "URP/IrisLinkBaseURP.hlsl"
 #elif defined(IrisShader_BRP)
-#include "BRP/IrisLinkBase.hlsl"
+#include "BRP/IrisLinkBaseBRP.hlsl"
 #endif
 

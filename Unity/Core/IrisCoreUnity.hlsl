@@ -10,7 +10,7 @@
 * 注入 Unity 引擎相关的 Iris 参数映射
 * 注入 Unity 引擎相关的 Shader 核心模块
 *
-* 加载 Iris Shader Pass 入口（IrisLinkPass.hlsl）
+* 加载 IrisPass 入口（IrisPass.hlsl）
 * 加载 Iris 库入口（IrisCore.hlsl）
 *
 */
