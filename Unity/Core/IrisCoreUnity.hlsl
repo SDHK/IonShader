@@ -22,15 +22,15 @@
 
 #include "../../../IrisConfig.hlsl"
 
-//===[注入基础库]===
-#define Inc_IrisBase "../../Unity/Core/Base/IrisLinkBase.hlsl"
+#ifdef IrisShader_BRP
+#include "BRP/IrisLinkCoreBRP.hlsl"
+#else 
+#include "URP/IrisLinkCoreURP.hlsl"
+#endif
 
-//====[注入 Unity 绑定]===
-#define Inc_IrisBind "../../Unity/Core/Bind/IrisLinkBind.hlsl"
 
 //===[加载 Iris Shader 库入口]===
 #include "../../Iris/Pass/IrisPass.hlsl"
 #include "../../Iris/Core/IrisCore.hlsl"
-
 #endif
 
