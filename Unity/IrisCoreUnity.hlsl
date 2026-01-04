@@ -20,17 +20,17 @@
 
 //===[引入配置]===
 
-#include "../../../IrisConfig.hlsl"
+#include "../../IrisConfig.hlsl"
 
+//===[引入引擎绑定]===
 #ifdef IrisShader_BRP
-#include "BRP/IrisLinkCoreBRP.hlsl"
-#else 
-#include "URP/IrisLinkCoreURP.hlsl"
+#include "Pipeline/BRP/Core/IrisCoreBRP.hlsl"
+#elif defined(IrisShader_URP)
+#include "Pipeline/URP/Core/IrisCoreURP.hlsl"
 #endif
 
-
 //===[加载 Iris Shader 库入口]===
-#include "../../Iris/Pass/IrisPass.hlsl"
-#include "../../Iris/Core/IrisCore.hlsl"
+#include "../Iris/Pass/IrisPass.hlsl"
+#include "../Iris/Core/IrisCore.hlsl"
 #endif
 

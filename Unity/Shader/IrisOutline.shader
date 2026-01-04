@@ -28,7 +28,7 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             HLSLPROGRAM
             #define Use_IrisPassOutlineDefault
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
 
         }
@@ -43,7 +43,7 @@ Shader "Iris/IrisOutline"
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
             #define Use_IrisPassOutlineForward
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
         // ===[阴影投射]===
@@ -57,7 +57,7 @@ Shader "Iris/IrisOutline"
             ColorMask 0
             HLSLPROGRAM
             #define Use_IrisPassOutlineShadow
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
     }
@@ -74,7 +74,7 @@ Shader "Iris/IrisOutline"
             Cull Front
             HLSLPROGRAM
             #define Use_IrisPassOutlineDefault
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
 
@@ -89,7 +89,7 @@ Shader "Iris/IrisOutline"
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
             #define Use_IrisPassOutlineForward
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
         // ===[阴影投射]===
@@ -103,7 +103,7 @@ Shader "Iris/IrisOutline"
             ColorMask 0
             HLSLPROGRAM
             #define Use_IrisPassOutlineShadow
-            #include "../Core/IrisCoreUnity.hlsl"
+            #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
     }
