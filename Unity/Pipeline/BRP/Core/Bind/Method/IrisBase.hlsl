@@ -7,8 +7,8 @@
 * 
 */
 
-#if Def(IrisBase)
-#define Def_IrisBase
+#if DefPart(IrisBase, Bind)
+#define Def_IrisBase_Bind
 
 //===[定义Unity的方法宏]===
 

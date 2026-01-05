@@ -7,8 +7,8 @@
 
 */
 
-#if Def(IrisHash) 
-#define Def_IrisHash
+#if DefPart(IrisHash, Tool) 
+#define Def_IrisHash_Tool
 
 float IrisHash_11(float p)
 {

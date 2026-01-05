@@ -6,9 +6,8 @@
 * 描述： Unity引擎光照方法实现集（URP版本）
 * 
 */
-#if Def(IrisLight)
-
-#define Def_IrisLight
+#if DefPart(IrisLight, Bind)
+#define Def_IrisLight_Bind
 
 
 //===[主光源获取]===

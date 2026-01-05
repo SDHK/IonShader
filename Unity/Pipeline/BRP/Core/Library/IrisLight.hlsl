@@ -10,10 +10,11 @@
 *
 */
 
-#if Def(IrisLight)
+#if DefPart(IrisLight, Library)
+#define Def_IrisLight_Library
 
 #include "Lighting.cginc"
 #include "AutoLight.cginc"
 
-#endif // Def(IrisLight)
+#endif // DefPart(IrisLight, Library)
 

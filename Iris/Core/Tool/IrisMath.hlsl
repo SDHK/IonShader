@@ -7,8 +7,8 @@
 
 */
 
-#if Def(IrisMath) 
-#define Def_IrisMath
+#if DefPart(IrisMath, Tool) 
+#define Def_IrisMath_Tool
 
 
 //根据角度计算半径为的圆上的点 0~1

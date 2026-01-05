@@ -9,8 +9,9 @@
 *
 */
 
-#if Def(IrisLight)
+#if DefPart(IrisLight, Library)
+#define Def_IrisLight_Library
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-#endif // Def(IrisLight)
+#endif // DefPart(IrisLight, Library)

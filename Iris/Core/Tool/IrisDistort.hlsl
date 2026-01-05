@@ -7,8 +7,8 @@
 
 */
 
-#if Def(IrisDistort) 
-#define Def_IrisDistort
+#if DefPart(IrisDistort, Tool) 
+#define Def_IrisDistort_Tool
 
 //极坐标扭曲 
 float2 IrisDistort_Polar(float2 uv, float distortAngle, float scale = 1)

@@ -7,8 +7,8 @@
 
 */
 
-#if Def(IrisNoise) 
-#define Def_IrisNoise
+#if DefPart(IrisNoise, Tool) 
+#define Def_IrisNoise_Tool
 
 #define Link_IrisHash
 #include "../IrisEdit.hlsl"

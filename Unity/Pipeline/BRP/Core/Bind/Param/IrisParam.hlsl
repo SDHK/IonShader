@@ -3,15 +3,12 @@
 * 作者： 闪电黑客
 * 日期： 2025/12/4 20:33
 *
-* 说明： Unity 引擎URP的 Iris 环境参数映射实现
+* 说明： Unity 引擎BRP的 Iris 环境参数映射实现
 * 
 */
 
-#ifdef Link_IrisBase
-
-
-#ifndef Def_IrisParam
-#define Def_IrisParam
+#if DefPart(IrisBase, Param)
+#define Def_IrisBase_Param
 
 //==={定义Unity的环境变量宏}===
 
@@ -31,25 +28,28 @@
 #define IrisParam_CameraProjectionParams unity_CameraProjectionParams
 
 //===[矩阵]===
+
 //float4x4 模型矩阵
-#define IrisParam_Matrix_M UNITY_MATRIX_M
+#define IrisParam_Matrix_M unity_ObjectToWorld
 //float4x4 模型矩阵的逆矩阵
-#define IrisParam_Matrix_I_M UNITY_MATRIX_I_M
+#define IrisParam_Matrix_I_M unity_WorldToObject
 //float4x4 模型矩阵的逆转置（用于法线转换）
-// 注意：URP 中没有 UNITY_MATRIX_IT_M，手动计算：逆转置 = 转置(逆矩阵)
+// BRP 中有 UNITY_MATRIX_IT_M
+//#define IrisParam_Matrix_IT_M UNITY_MATRIX_IT_M
 #define IrisParam_Matrix_IT_M transpose((float3x3)IrisParam_Matrix_I_M)
 //float4x4 视图矩阵
 #define IrisParam_Matrix_V UNITY_MATRIX_V
 //float4x4 视图矩阵的逆矩阵
 #define IrisParam_Matrix_I_V UNITY_MATRIX_I_V
 //float4x4 投影矩阵
-#define IrisParam_Matrix_P UNITY_MATRIX_P
+#define IrisParam_Matrix_P unity_CameraProjection
 //float4x4 投影矩阵的逆矩阵
-#define IrisParam_Matrix_I_P UNITY_MATRIX_I_P
+#define IrisParam_Matrix_I_P unity_CameraInvProjection
+
 //float4x4 视图投影矩阵
 #define IrisParam_Matrix_VP UNITY_MATRIX_VP
 //float4x4 视图投影矩阵的逆矩阵
-#define IrisParam_Matrix_I_VP UNITY_MATRIX_I_VP
+#define IrisParam_Matrix_I_VP mul(IrisParam_Matrix_I_V, IrisParam_Matrix_I_P)
 //float4x4 模型视图矩阵
 #define IrisParam_Matrix_MV UNITY_MATRIX_MV
 //float4x4 模型视图矩阵的逆矩阵
@@ -59,12 +59,10 @@
 //float4x4 模型视图投影矩阵的逆矩阵
 #define IrisParam_Matrix_I_MVP mul(IrisParam_Matrix_I_VP, IrisParam_Matrix_I_M)
 
-
 //float4x4 模型视图矩阵的转置
 #define IrisParam_Matrix_T_MV UNITY_MATRIX_T_MV
 //float4x4 模型视图矩阵的逆转置
 #define IrisParam_Matrix_IT_MV UNITY_MATRIX_IT_MV
-
 
 //===[时间]===
 
@@ -132,6 +130,4 @@
 //float4 雾的参数。x:密度，y:起始距离，z:结束距离，w:其他参数
 #define IrisParam_FogParams unity_FogParams
 
-#endif
-
-#endif // Link_IrisBase
+#endif // DefPart(IrisBase, Param)

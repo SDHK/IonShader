@@ -9,9 +9,11 @@
 *
 */
 
-#if Def(IrisBase)
+#if DefPart(IrisBase, Library)
+#define Def_IrisBase_Library
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-#endif // Def(IrisBase)
+#endif // DefPart(IrisBase, Library)
+
 

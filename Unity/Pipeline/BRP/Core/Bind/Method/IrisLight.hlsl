@@ -7,8 +7,8 @@
 * 
 */
 
-#if Def(IrisLight)
-#define Def_IrisLight
+#if DefPart(IrisLight, Bind)
+#define Def_IrisLight_Bind
 
 
 //===[主光源获取]===

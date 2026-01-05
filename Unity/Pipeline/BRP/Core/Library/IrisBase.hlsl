@@ -9,9 +9,10 @@
 *
 */
 
-#if Def(IrisBase)
+#if DefPart(IrisBase, Library)
+#define Def_IrisBase_Library
 
 #include "UnityCG.cginc"
 
-#endif // Def(IrisBase)
+#endif // DefPart(IrisBase, Library)
 

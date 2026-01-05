@@ -15,12 +15,12 @@
 *   * 看到需要定义的 Link_XXX 宏（如 Link_IrisHash）
 *   * 理解模块间的依赖关系
 * - 运行时（定义 IrisShader）：
-*   让编辑器辅助入口（IrisEdit.hlsl）无效化，实际包含由 IrisLinkTools.hlsl 统一控制
+*   让编辑器辅助入口（IrisEdit.hlsl）无效化，实际包含由 IrisLinkTool.hlsl 统一控制
 *   避免循环引用，确保只包含需要的模块
 *
 * 注意：
 * - 本文件是给外部 Shader 文件使用的运行时入口
-* - 内部工具文件（Tools/）和 Pass 文件（Pass/）应使用 IrisEdit.hlsl 作为编辑器辅助入口
+* - 内部工具文件（Tool/）和 Pass 文件（Pass/）应使用 IrisEdit.hlsl 作为编辑器辅助入口
 * - IrisEdit.hlsl 在运行时会被 IrisShader 宏禁用，避免不必要的代码包含
 *
 */
@@ -61,6 +61,6 @@
 
 //===[可选引用]===
 // 工具函数统一入口（根据 Link_IrisXXX 宏控制是否链接）
-#include "Tools/IrisLinkTools.hlsl"
+#include "Tool/IrisLinkTool.hlsl"
 
 #endif // Def_IrisCore

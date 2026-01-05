@@ -17,10 +17,8 @@
 *
 */
 
-#ifdef Link_IrisBase
-
-#ifndef Def_IrisParam
-#define Def_IrisParam
+#if DefPart(IrisBase, Param)
+#define Def_IrisBase_Param
    
 //===[相机]===
 
@@ -139,7 +137,5 @@
 #define IrisParam_FogParams IrisConst_Float4_Zero
 
 
-#endif
-
-#endif
+#endif // DefPart(IrisBase, Param)
 
