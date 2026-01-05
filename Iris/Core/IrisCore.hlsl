@@ -32,6 +32,14 @@
 //===[引入核心宏定义]===
 #include "../IrisMacro.hlsl"
 
+//===[引入映射系统]===
+// 注意：Map 必须在 Library 之前引入，以便 Unity 库代码能正确识别关键字
+#ifdef Inc_IrisMap
+#include Inc_IrisMap
+#else
+#include "Map/IrisLinkMap.hlsl"
+#endif
+
 //===[环境库引用]===
 // 引用基础库（根据 URP/BRP 自动选择）
 // 使用 Use_IrisBase 和 Use_IrisLight 宏控制是否链接

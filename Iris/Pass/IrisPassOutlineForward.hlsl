@@ -15,7 +15,7 @@
 #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 #endif
 
-#define SHADOWS_SCREEN
+#define IrisSet_ShadowScreen
 #define Use_IrisBase
 #define Use_IrisLight
 #define Use_IrisMatrix

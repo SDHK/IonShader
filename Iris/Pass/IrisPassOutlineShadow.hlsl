@@ -12,7 +12,8 @@
 
 #pragma vertex vert
 #pragma fragment frag
-#pragma multi_compile_shadowcaster
+
+#define IrisKey_ShadowCaster
 
 #define Use_IrisBase
 #define Use_IrisLight

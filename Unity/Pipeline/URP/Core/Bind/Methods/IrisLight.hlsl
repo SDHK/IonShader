@@ -26,6 +26,8 @@ IrisStruct_Light IrisLight_MainLight()
     light.LayerMask = urpLight.layerMask; 
     return light;
 }
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
 
 // 获取主光源信息（带阴影支持版本）
 // 参数：shadowCoord - 阴影坐标，用于计算阴影衰减
