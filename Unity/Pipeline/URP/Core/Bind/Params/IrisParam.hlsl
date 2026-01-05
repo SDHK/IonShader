@@ -7,7 +7,7 @@
 * 
 */
 
-#ifdef Use_IrisBase
+#ifdef Link_IrisBase
 
 
 #ifndef Def_IrisParam
@@ -134,4 +134,4 @@
 
 #endif
 
-#endif // Use_IrisBase
+#endif // Link_IrisBase

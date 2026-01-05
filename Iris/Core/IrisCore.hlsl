@@ -12,7 +12,7 @@
 * - 编辑器时（未定义 IrisShader）：
 *   用于代码跳转和依赖提示，让开发者能够：
 *   * 通过 #include "../IrisEdit.hlsl" 跳转到依赖模块
-*   * 看到需要定义的 Use_XXX 宏（如 Use_IrisHash）
+*   * 看到需要定义的 Link_XXX 宏（如 Link_IrisHash）
 *   * 理解模块间的依赖关系
 * - 运行时（定义 IrisShader）：
 *   让编辑器辅助入口（IrisEdit.hlsl）无效化，实际包含由 IrisLinkTools.hlsl 统一控制
@@ -42,7 +42,7 @@
 
 //===[环境库引用]===
 // 引用基础库（根据 URP/BRP 自动选择）
-// 使用 Use_IrisBase 和 Use_IrisLight 宏控制是否链接
+// 使用 Link_IrisBase 和 Link_IrisLight 宏控制是否链接
 #ifdef Inc_IrisLibrary
 #include Inc_IrisLibrary
 #endif
@@ -60,7 +60,7 @@
 #endif
 
 //===[可选引用]===
-// 工具函数统一入口（根据 Use_IrisXXX 宏控制是否链接）
+// 工具函数统一入口（根据 Link_IrisXXX 宏控制是否链接）
 #include "Tools/IrisLinkTools.hlsl"
 
 #endif // Def_IrisCore

@@ -13,10 +13,10 @@
 #pragma vertex vert
 #pragma fragment frag
 
-#define Use_IrisBase
-#define Use_IrisMatrix
-#define Use_IrisMath
-#define Use_IrisVertex
+#define Link_IrisBase
+#define Link_IrisMatrix
+#define Link_IrisMath
+#define Link_IrisVertex
 #include "../Core/IrisCore.hlsl"
 
 struct VertData

@@ -17,7 +17,7 @@
 *
 */
 
-#ifdef Use_IrisBase
+#ifdef Link_IrisBase
 
 #ifndef Def_IrisParam
 #define Def_IrisParam

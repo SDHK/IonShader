@@ -8,7 +8,7 @@
 */
 
 
-#ifdef Use_IrisBase
+#ifdef Link_IrisBase
 
 #ifndef Def_IrisBase
 #define Def_IrisBase

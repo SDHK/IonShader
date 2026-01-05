@@ -14,7 +14,7 @@
 *   包含 IrisCore.hlsl，提供代码跳转和依赖提示
 *   让开发者能够：
 *   * 通过 #include "../IrisEdit.hlsl" 跳转到依赖模块
-*   * 看到需要定义的 Use_XXX 宏（如 Use_IrisHash）
+*   * 看到需要定义的 Link_XXX 宏（如 Link_IrisHash）
 *   * 理解模块间的依赖关系
 * - 运行时（定义 IrisShader）：
 *   不包含任何内容，完全无效化

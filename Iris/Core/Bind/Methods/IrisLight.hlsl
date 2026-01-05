@@ -7,7 +7,7 @@
 *
 */
 
-#ifdef Use_IrisLight
+#ifdef Link_IrisLight
 
 #ifndef Def_IrisLight
 #define Def_IrisLight

@@ -27,7 +27,7 @@ Shader "Iris/IrisOutline"
             ZWrite On  // 透明队列通常关闭深度写入
             ZTest LEqual
             HLSLPROGRAM
-            #define Use_IrisPassOutlineDefault
+            #define Link_IrisPassOutlineDefault
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
 
@@ -42,7 +42,7 @@ Shader "Iris/IrisOutline"
             Blend Off            // 强制不混合
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Use_IrisPassOutlineForward
+            #define Link_IrisPassOutlineForward
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
@@ -56,7 +56,7 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Use_IrisPassOutlineShadow
+            #define Link_IrisPassOutlineShadow
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
@@ -73,7 +73,7 @@ Shader "Iris/IrisOutline"
             Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
-            #define Use_IrisPassOutlineDefault
+            #define Link_IrisPassOutlineDefault
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
@@ -88,7 +88,7 @@ Shader "Iris/IrisOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Use_IrisPassOutlineForward
+            #define Link_IrisPassOutlineForward
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }
@@ -102,7 +102,7 @@ Shader "Iris/IrisOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Use_IrisPassOutlineShadow
+            #define Link_IrisPassOutlineShadow
             #include "../IrisCoreUnity.hlsl"
             ENDHLSL
         }

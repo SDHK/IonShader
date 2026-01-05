@@ -12,14 +12,14 @@
 *
 * 功能：
 * - 统一包含所有 Pass 文件
-* - 根据 Use_IrisXXXPass 宏控制是否链接
+* - 根据 Link_IrisXXXPass 宏控制是否链接
 * - 提供 Def 和 Link 宏定义，供 Pass 文件使用
 *
 * 使用方法：
 * 1. 在 Shader 文件中定义需要的 Pass 宏：
-*    #define Use_IrisPassOutlineDefault
-*    #define Use_IrisPassOutlineForward
-*    #define Use_IrisPassOutlineShadow
+*    #define Link_IrisPassOutlineDefault
+*    #define Link_IrisPassOutlineForward
+*    #define Link_IrisPassOutlineShadow
 *
 * 注意：
 * - 确保 Pass 在 Core 之前加载

@@ -10,7 +10,7 @@
 #if Def(IrisNoise) 
 #define Def_IrisNoise
 
-#define Use_IrisHash
+#define Link_IrisHash
 #include "../IrisEdit.hlsl"
 
 float3 IrisNoise_Random3(float3 c)

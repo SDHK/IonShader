@@ -15,9 +15,9 @@
 
 #define IrisKey_ShadowCaster
 
-#define Use_IrisBase
-#define Use_IrisLight
-#define Use_IrisMatrix
+#define Link_IrisBase
+#define Link_IrisLight
+#define Link_IrisMatrix
 #include "../Core/IrisCore.hlsl"
 
 struct VertData

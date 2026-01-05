@@ -37,7 +37,7 @@
 #if Def(IrisMatrix) 
 #define Def_IrisMatrix
 
-#define Use_IrisBase
+#define Link_IrisBase
 #include "../IrisEdit.hlsl"
 
 

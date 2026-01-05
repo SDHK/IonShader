@@ -4,23 +4,23 @@
 #pragma vertex vert
 #pragma fragment frag
 
-// 阴影编译指令（根据URP/BRP自动选择，需要在include之前定义IrisShader_URP或IrisShader_BRP）
-#ifdef IrisShader_URP
-#pragma multi_compile_fog
-#pragma multi_compile_instancing
-#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-#pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-#pragma multi_compile _ _SHADOWS_SOFT
-#elif defined(IrisShader_BRP)
-#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
-#endif
+// 变体关键字声明（通过 IrisKey 系统自动生成对应的 #pragma multi_compile）
+// IrisKey 系统会根据 URP/BRP 自动生成对应的变体指令
+#define IrisKey_Fog
+#define IrisKey_Instancing
+#define IrisKey_MainLightShadows
+#define IrisKey_MainLightShadowsCascade
+#define IrisKey_ShadowsSoft
+#define IrisKey_ForwardBase
 
+// 阴影设置
 #define IrisSet_ShadowScreen
-#define Use_IrisBase
-#define Use_IrisLight
-#define Use_IrisMatrix
-#define Use_IrisMath
-#define Use_IrisVertex
+
+#define Link_IrisBase
+#define Link_IrisLight
+#define Link_IrisMatrix
+#define Link_IrisMath
+#define Link_IrisVertex
 
 #include "../Core/IrisCore.hlsl"
 
