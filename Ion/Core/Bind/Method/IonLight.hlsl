@@ -7,10 +7,8 @@
 *
 */
 
-#ifdef Link_IonLight
-
-#ifndef Def_IonLight
-#define Def_IonLight
+#if DefPart(IonLight, Bind)
+#define Def_IonLight_Bind
 
 
 //===[主光源获取]===
@@ -60,6 +58,5 @@
 //返回值：阴影衰减值（half）
 #define IonShadowCaster_Fragment(vec)
 
-#endif
 #endif
 

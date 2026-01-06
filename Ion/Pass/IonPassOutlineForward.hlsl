@@ -70,11 +70,11 @@ half4 frag(FragData fragData) : SV_Target
     float4 shadowCoord = IonLight_WorldToShadow(fragData.PositionWS, fragData.ShadowCoord);
     IonStruct_Light mainLight = IonLight_MainLight(shadowCoord);
 
-    // 计算简单的 Lambert 光照
-    float NdotL = saturate(dot(normalize(fragData.NormalWS), mainLight.Direction));
-
-    // 应用阴影衰减到光照
-    half3 directLighting = mainLight.Color.rgb * NdotL * mainLight.ShadowAttenuation;
+    // 计算 Lambert 光照（使用工具函数）
+    float3 normalWS = normalize(fragData.NormalWS);
+    half3 directLighting = IonLight_LambertSimple(normalWS, mainLight.Direction, mainLight.Color, mainLight.ShadowAttenuation);
+    
+    // 最终光照 = 直接光照 + 环境光
     float3 lighting = directLighting + IonParam_AmbientSky.rgb;
 
     // 应用光照

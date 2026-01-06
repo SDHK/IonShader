@@ -26,6 +26,10 @@
 #if Link(IonMatrix)
 #include "IonMatrix.hlsl"   // 矩阵计算
 #endif
+//===[光照工具]===
+#if Link(IonLight)
+#include "IonLight.hlsl"     // 光照计算工具（Lambert 等）
+#endif
 //===[高级工具]===
 #if Link(IonNoise)
 #include "IonNoise.hlsl"     // 噪声函数（依赖 IonHash）

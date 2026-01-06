@@ -8,14 +8,11 @@
 */
 
 
-#ifdef Link_IonBase
-
-#ifndef Def_IonBase
-#define Def_IonBase
+#if DefPart(IonBase, Bind)
+#define Def_IonBase_Bind
 
 //转换纹理 float2,float4x4
 #define Ion_Transform_TEX(uv, mainTex)
 
-#endif
 #endif
 
