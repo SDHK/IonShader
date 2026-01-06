@@ -35,8 +35,8 @@
  //           #pragma multi_compile _ PIXELSNAP_ON
  //           #include "UnityCG.cginc"
 
- //           #define Link_IrisNoise
- //           #include "../IrisEntryUnity.hlsl"
+ //           #define Link_IonNoise
+ //           #include "../IonEntryUnity.hlsl"
 
  //           struct appdata_t
  //           {

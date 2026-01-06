@@ -47,9 +47,9 @@ Shader "Unlit/EdgeShader"
 
     //        #include "AutoLight.cginc"
 
-    //        #define Link_IrisNoise
-    //        #define Link_IrisMath
-    //        #include "../IrisEntryUnity.hlsl"
+    //        #define Link_IonNoise
+    //        #define Link_IonMath
+    //        #include "../IonEntryUnity.hlsl"
 
 
     //        sampler2D _MainTex;
@@ -172,8 +172,8 @@ Shader "Unlit/EdgeShader"
 
     //        #include "AutoLight.cginc"
 
-    //        #define Link_IrisNoise
-    //        #include "../IrisEntryUnity.hlsl"
+    //        #define Link_IonNoise
+    //        #include "../IonEntryUnity.hlsl"
 
 
     //        sampler2D _MainTex;

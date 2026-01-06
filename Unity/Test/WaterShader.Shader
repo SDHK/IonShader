@@ -54,8 +54,8 @@
  //           // Includes
           
 
- //           #define Link_IrisNoise
- //           #include "../IrisEntryUnity.hlsl"
+ //           #define Link_IonNoise
+ //           #include "../IonEntryUnity.hlsl"
  //           #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
  //           #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
  //           #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"

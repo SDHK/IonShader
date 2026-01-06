@@ -45,9 +45,9 @@
     //        #include "UnityCG.cginc"
 
 
-    //        #define Link_IrisMath
-    //        #define Link_IrisNoise
-    //        #include "../IrisEntryUnity.hlsl"
+    //        #define Link_IonMath
+    //        #define Link_IonNoise
+    //        #include "../IonEntryUnity.hlsl"
 
 
     //        //顶点数据结构
@@ -113,7 +113,7 @@
     //        fixed4 frag(Data data) : SV_Target //片元着色器，控制像素颜色
     //        {
     //            fixed4 color = tex2D(_MainTex, data.uv);
-    //            float time = Iris_Time.y;
+    //            float time = Ion_Time.y;
     //            color = fragTest1(data.uv,time);
 
     //            return color;
