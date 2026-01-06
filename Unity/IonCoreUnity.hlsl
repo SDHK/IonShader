@@ -20,7 +20,7 @@
 
 //===[引入配置]===
 
-#include "../../IonConfig.hlsl"
+#include "../IonConfig.hlsl"
 
 //===[引入引擎绑定]===
 #ifdef IonShader_BRP
