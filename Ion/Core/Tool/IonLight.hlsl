@@ -20,13 +20,13 @@
 // 参数：shadowAttenuation - 阴影衰减（half）
 // 返回值：光照贡献（half3），包含光源颜色、Lambert 系数和衰减
 // 说明：Lambert 光照模型：LightColor * max(0, dot(Normal, LightDirection)) * Attenuation
-half3 IonLight_Lambert(float3 normalWS, float3 lightDirection, half3 lightColor, float distanceAttenuation, half shadowAttenuation)
+half3 IonLight_Lambert(float3 normalWS, float3 lightDirection, half3 lightColor, half shadowAttenuation, float distanceAttenuation)
 {
     // 计算法线与光源方向的点积（Lambert 系数）
-    float NdotL = saturate(dot(normalWS, lightDirection));
+    float ratio = saturate(dot(normalWS, lightDirection));
     
     // 计算光照贡献：光源颜色 * Lambert 系数 * 距离衰减 * 阴影衰减
-    return lightColor * NdotL * distanceAttenuation * shadowAttenuation;
+    return lightColor * ratio * distanceAttenuation * shadowAttenuation;
 }
 
 // 计算 Lambert 光照贡献（简化版本，不包含距离衰减）
@@ -39,10 +39,10 @@ half3 IonLight_Lambert(float3 normalWS, float3 lightDirection, half3 lightColor,
 half3 IonLight_LambertSimple(float3 normalWS, float3 lightDirection, half3 lightColor, half shadowAttenuation)
 {
     // 计算法线与光源方向的点积（Lambert 系数）
-    float NdotL = saturate(dot(normalWS, lightDirection));
+    float ratio = saturate(dot(normalWS, lightDirection));
     
     // 计算光照贡献：光源颜色 * Lambert 系数 * 阴影衰减
-    return lightColor * NdotL * shadowAttenuation;
+    return lightColor * ratio * shadowAttenuation;
 }
 
 #endif // DefPart(IonLight, Tool)

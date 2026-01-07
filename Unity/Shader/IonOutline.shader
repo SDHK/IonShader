@@ -42,9 +42,12 @@ Shader "Ion/IonOutline"
             Blend Off            // 强制不混合
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Link_IonPassOutlineForward
+            #define IonPassMainSimple_MainTex _MainTex
+            #define IonPassMainSimple_MainTexA _MainTex
+            #define Link_IonPassMainSimple
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
+
         }
         // ===[阴影投射]===
         Pass
@@ -56,7 +59,7 @@ Shader "Ion/IonOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Link_IonPassOutlineShadow
+            #define Link_IonPassShadowCaster
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }
@@ -88,7 +91,10 @@ Shader "Ion/IonOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define Link_IonPassOutlineForward
+            #define IonPassMainSimple_MainTex _MainTex
+            #define IonPassMainSimple_MainTexA _MainTex
+            
+            #define Link_IonPassMainSimple
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }
@@ -102,7 +108,7 @@ Shader "Ion/IonOutline"
             ZTest LEqual
             ColorMask 0
             HLSLPROGRAM
-            #define Link_IonPassOutlineShadow
+            #define Link_IonPassShadowCaster
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }

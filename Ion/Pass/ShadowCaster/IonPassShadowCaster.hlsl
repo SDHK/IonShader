@@ -7,8 +7,8 @@
 *
 */
 
-#if Def(IonPassOutlineShadow)
-#define Def_IonPassOutlineShadow
+#if Def(IonPassShadowCaster)
+#define Def_IonPassShadowCaster
 
 #pragma vertex vert
 #pragma fragment frag
@@ -18,7 +18,7 @@
 #define Link_IonBase
 #define Link_IonLight
 #define Link_IonMatrix
-#include "../Core/IonCore.hlsl"
+#include "../../Core/IonCore.hlsl"
 
 struct VertData
 {
@@ -32,9 +32,6 @@ struct FragData
     IonVar_T0(float3,LightVector3)
 
 };
-
-float4 _Color;
-float _Scale;
 
 FragData vert(VertData vertData)
 {
@@ -50,5 +47,5 @@ half4 frag(FragData fragData) : SV_Target
     return IonShadowCaster_Fragment(fragData.LightVector3);
 }
 
-#endif // Def(IonPassOutlineShadow)
+#endif // Def(IonPassShadowCaster)
 

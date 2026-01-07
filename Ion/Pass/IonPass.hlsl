@@ -33,15 +33,13 @@
 #include "../IonMacro.hlsl"
 
 
+#include "Main/IonLinkMain.hlsl"
+#include "ShadowCaster/IonLinkShadowCaster.hlsl"
+
 //===[引入Pass库]===
 #if Link(IonPassOutlineDefault)
 #include "IonPassOutlineDefault.hlsl"   // 默认轮廓 Pass
 #endif
-#if Link(IonPassOutlineForward)
-#include "IonPassOutlineForward.hlsl"   // 前向渲染 Pass
-#endif
-#if Link(IonPassOutlineShadow)
-#include "IonPassOutlineShadow.hlsl"    // 阴影投射 Pass
-#endif
+
 
 #endif // Def_IonPass

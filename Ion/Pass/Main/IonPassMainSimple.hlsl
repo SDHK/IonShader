@@ -1,5 +1,17 @@
-#if Def(IonPassOutlineForward)
-#define Def_IonPassOutlineForward
+#if Def(IonPassMainSimple)
+#define Def_IonPassMainSimple
+
+#if PassVar2(
+IonPassMainSimple,
+MainTex,
+MainTexA
+)
+
+#error "IonPassMainSimple 缺少必要的参数定义"  
+#endif
+
+
+
 
 #pragma vertex vert
 #pragma fragment frag
@@ -22,7 +34,8 @@
 #define Link_IonMath
 #define Link_IonVertex
 
-#include "../Core/IonCore.hlsl"
+#include "../../Core/IonCore.hlsl"
+
 
 struct VertData
 {
@@ -49,7 +62,7 @@ FragData vert(VertData vertData)
     
     // 计算世界空间位置
     fragData.PositionCS = IonMatrix_ObjectToClip(vertData.PositionOS);
-    fragData.UV = Ion_Transform_TEX(vertData.UV, _MainTex);
+    fragData.UV = Ion_Transform_TEX(vertData.UV, IonPassMainSimple_MainTex);
 
     // 将法线转换到世界空间（使用法线专用函数）
     fragData.NormalWS = IonMatrix_ObjectToWorldNormal(vertData.Normal);
@@ -83,5 +96,6 @@ half4 frag(FragData fragData) : SV_Target
     return mainTex;
 }
 
-#endif // Def(IonPassOutlineForward)
+#endif // Def(IonPassMainSimple)
+
 
