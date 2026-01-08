@@ -32,14 +32,10 @@
 //===[引入核心宏定义]===
 #include "../IonMacro.hlsl"
 
+//===[引入Pass库]===
 
 #include "Main/IonLinkMain.hlsl"
 #include "ShadowCaster/IonLinkShadowCaster.hlsl"
-
-//===[引入Pass库]===
-#if Link(IonPassOutlineDefault)
-#include "IonPassOutlineDefault.hlsl"   // 默认轮廓 Pass
-#endif
-
+#include "Outline/IonLinkOutline.hlsl" 
 
 #endif // Def_IonPass

@@ -1,3 +1,7 @@
+HLSLINCLUDE
+#define IonShader
+ENDHLSL
+
 Shader "Ion/IonOutline"
 {
     Properties
@@ -6,17 +10,12 @@ Shader "Ion/IonOutline"
         _Color ("Pass 1 Color", Color) =  (1, 0, 0, 1)
         _Scale ("Outline Scale", Float) = 0.1
     }
-    HLSLINCLUDE
-    #define IonShader
 
-
-    sampler2D _MainTex;
-    float4 _MainTex_ST;
-    ENDHLSL
     //===[URP管线]===
     SubShader
     {
         Tags {"RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque"  "Queue" = "Geometry" }
+        
         // ===[描边]====
         Pass
         {
@@ -27,10 +26,12 @@ Shader "Ion/IonOutline"
             ZWrite On  // 透明队列通常关闭深度写入
             ZTest LEqual
             HLSLPROGRAM
-            #define Link_IonPassOutlineDefault
+
+            #define Link_IonPassOutline
+            #define PassVar_Color _Color
+            #define PassVar_Scale _Scale
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
-
         }
         // ===[简单渲染]===
         Pass
@@ -42,13 +43,14 @@ Shader "Ion/IonOutline"
             Blend Off            // 强制不混合
             //Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define IonPassMainSimple_MainTex _MainTex
-            #define IonPassMainSimple_MainTexA _MainTex
+            #define PassVar_MainTex _MainTex
+            #define PassVar_MainTex_ST _MainTex_ST
             #define Link_IonPassMainSimple
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
 
         }
+
         // ===[阴影投射]===
         Pass
         {
@@ -60,6 +62,7 @@ Shader "Ion/IonOutline"
             ColorMask 0
             HLSLPROGRAM
             #define Link_IonPassShadowCaster
+            // #define PassVar_Scale _Scale
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }
@@ -76,7 +79,9 @@ Shader "Ion/IonOutline"
             Tags { "LightMode" = "Always" }
             Cull Front
             HLSLPROGRAM
-            #define Link_IonPassOutlineDefault
+            #define Link_IonPassOutline
+            #define PassVar_Color _Color
+            #define PassVar_Scale _Scale
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }
@@ -91,9 +96,8 @@ Shader "Ion/IonOutline"
             // ZTest LEqual
             // Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
-            #define IonPassMainSimple_MainTex _MainTex
-            #define IonPassMainSimple_MainTexA _MainTex
-            
+            #define PassVar_MainTex _MainTex
+            #define PassVar_MainTex_ST _MainTex_ST
             #define Link_IonPassMainSimple
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
@@ -109,6 +113,7 @@ Shader "Ion/IonOutline"
             ColorMask 0
             HLSLPROGRAM
             #define Link_IonPassShadowCaster
+            // #define PassVar_Scale _Scale
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }

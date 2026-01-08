@@ -1,16 +1,17 @@
+
 #if Def(IonPassMainSimple)
 #define Def_IonPassMainSimple
 
-#if PassVar2(
-IonPassMainSimple,
-MainTex,
-MainTexA
-)
-
-#error "IonPassMainSimple 缺少必要的参数定义"  
+#if PassVar(MainTex)
+#error "IonPassMainSimple 缺少必要的参数定义：MainTex"
 #endif
 
+#if PassVar(MainTex_ST)
+#error "IonPassMainSimple 缺少必要的参数定义：MainTex_ST"
+#endif
 
+sampler2D PassVar_MainTex;
+float4 PassVar_MainTex_ST;
 
 
 #pragma vertex vert
@@ -46,7 +47,6 @@ struct VertData
 
 struct FragData
 {
-
     IonVar_PositionCS
     IonVar_T0(float2, UV)
     IonVar_T1(float3, NormalWS)
@@ -62,7 +62,7 @@ FragData vert(VertData vertData)
     
     // 计算世界空间位置
     fragData.PositionCS = IonMatrix_ObjectToClip(vertData.PositionOS);
-    fragData.UV = Ion_Transform_TEX(vertData.UV, IonPassMainSimple_MainTex);
+    fragData.UV = Ion_Transform_TEX(vertData.UV,PassVar_MainTex_ST);
 
     // 将法线转换到世界空间（使用法线专用函数）
     fragData.NormalWS = IonMatrix_ObjectToWorldNormal(vertData.Normal);

@@ -10,6 +10,12 @@
 #if Def(IonPassShadowCaster)
 #define Def_IonPassShadowCaster
 
+// 默认参数定义
+#if PassVar(Scale)
+#warning "IonPassShadowCaster没有定义 PassVar_Scale，使用默认值 1.0"
+#endif
+float PassVar_Scale = 1.0;
+
 #pragma vertex vert
 #pragma fragment frag
 
@@ -36,8 +42,13 @@ struct FragData
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    fragData.PositionCS = IonShadowCaster_PositionCS(vertData.PositionOS, vertData.Normal); 
-    fragData.LightVector3 = IonShadowCaster_Vector(vertData.PositionOS);
+    
+    // 应用Scale扩展（与Outline Pass保持一致）
+    float3 position3 = vertData.PositionOS.xyz + vertData.Normal * PassVar_Scale;
+    float4 positionOSScaled = float4(position3, vertData.PositionOS.w);
+    
+    fragData.PositionCS = IonShadowCaster_PositionCS(positionOSScaled, vertData.Normal); 
+    fragData.LightVector3 = IonShadowCaster_Vector(positionOSScaled);
     return fragData;
 }
 
