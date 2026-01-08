@@ -25,7 +25,6 @@ IonStruct_Light IonLight_MainLight()
     light.LayerMask = urpLight.layerMask; 
     return light;
 }
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 
 // 获取主光源信息（带阴影支持版本）
@@ -34,26 +33,9 @@ IonStruct_Light IonLight_MainLight()
 // 说明：优化版本，避免重复计算shadowCoord
 IonStruct_Light IonLight_MainLight(float4 shadowCoord)
 {
-    IonStruct_Light light;
-    Light urpLight = GetMainLight(shadowCoord);
-    light.Direction = urpLight.direction;
-    light.Color = urpLight.color;
-    light.DistanceAttenuation = urpLight.distanceAttenuation;
-    light.ShadowAttenuation = urpLight.shadowAttenuation;
-    light.LayerMask = urpLight.layerMask;
-    return light;
+    return IonLight_MainLight();
 }
 
-//===[阴影坐标转换]===
-
-// 将世界空间位置转换为阴影坐标
-// 参数：positionWS - 世界空间位置（float3）
-// 参数：shadowCoord - 阴影坐标（通常传入fragData._ShadowCoord，此参数用于接口统一）
-// 返回值：转换后的阴影坐标（float4）
-float4 IonLight_WorldToShadow(float3 positionWS, float4 shadowCoord)
-{
-    return TransformWorldToShadowCoord(positionWS);
-}
 
 //===[阴影接收相关方法] ===
 // 这些方法用于在Forward Pass中接收阴影

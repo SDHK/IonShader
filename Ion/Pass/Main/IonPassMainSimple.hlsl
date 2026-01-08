@@ -80,8 +80,7 @@ half4 frag(FragData fragData) : SV_Target
     half4 mainTex = tex2D(_MainTex, fragData.UV);
 
     // 获取主光源信息并计算阴影（统一接口，自动适配URP/BRP）
-    float4 shadowCoord = IonLight_WorldToShadow(fragData.PositionWS, fragData.ShadowCoord);
-    IonStruct_Light mainLight = IonLight_MainLight(shadowCoord);
+    IonStruct_Light mainLight = IonLight_MainLight(fragData.ShadowCoord);
 
     // 计算 Lambert 光照（使用工具函数）
     float3 normalWS = normalize(fragData.NormalWS);

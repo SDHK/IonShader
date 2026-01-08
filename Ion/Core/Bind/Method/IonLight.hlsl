@@ -20,14 +20,6 @@
 //参数：shadowCoord - 阴影坐标（float4）
 #define IonLight_MainLight(shadowCoord)
 
-//===[阴影坐标转换]===
-
-//将世界空间位置转换为阴影坐标
-//参数：positionWS - 世界空间位置（float3）
-//参数：shadowCoord - 阴影坐标（float4，用于接口统一）
-//返回值：阴影坐标（float4）
-#define IonLight_WorldToShadow(positionWS, shadowCoord)
-
 //===[阴影接收相关方法]===
 //这些方法用于在Forward Pass中接收阴影
 

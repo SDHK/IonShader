@@ -63,17 +63,6 @@ IonStruct_Light IonLight_MainLight(float4 shadowCoord)
     return light;
 }
 
-//===[阴影坐标转换]===
-
-// 将世界空间位置转换为阴影坐标
-// 参数：positionWS - 世界空间位置（float3）
-// 参数：shadowCoord - 阴影坐标（BRP中直接返回传入的shadowCoord）
-// 返回值：阴影坐标（float4）
-// 说明：BRP中阴影坐标已经在vertex shader中计算好，直接返回即可
-float4 IonLight_WorldToShadow(float3 positionWS, float4 shadowCoord)
-{
-    return shadowCoord;
-}
 
 //===[阴影接收相关方法] ===
 // 这些方法用于在Forward Pass中接收阴影
@@ -106,6 +95,7 @@ float4 IonLight_ShadowCoord(float4 positionOS, float4 positionCS, float3 positio
         return float4(0, 0, 0, 0); // 无阴影情况
     #endif
 }
+
 
 
 //===[阴影投射相关方法] ===
