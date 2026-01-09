@@ -21,7 +21,7 @@ Shader "Ion/IonOutline"
         {
 
             Name "OUTLINE"
-            Tags { "LightMode" = "UniversalForwardOnly"  }
+            Tags { "LightMode" = "SRPDefaultUnlit"  }
             Cull Front
             ZWrite On  // 透明队列通常关闭深度写入
             ZTest LEqual

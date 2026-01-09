@@ -1,4 +1,4 @@
-Shader "Test/SimpleShadowReceiverURP"
+Shader "Test/SimpleShadowURP"
 {
     Properties
     {
@@ -41,6 +41,9 @@ Shader "Test/SimpleShadowReceiverURP"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _SHADOWS_SOFT
+            // 附加光源编译指令
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -91,15 +94,25 @@ Shader "Test/SimpleShadowReceiverURP"
                 float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv) * _Color;
                 //half4 mainTex = tex2D(_MainTex, i.uv);
 
-                float4 shadowCoord = TransformWorldToShadowCoord(i.worldPos);
-                Light mainLight = GetMainLight(shadowCoord);
-
                 float3 normalWS = normalize(i.worldNormal);
-                float NdotL = saturate(dot(normalWS, mainLight.direction));
                 half3 ambient = SampleSH(normalWS);
 
-                // 强制主光至少有一点贡献，或者输出颜色，确保不是全黑
+                // 主光源
+                Light mainLight = GetMainLight();
+                float NdotL = saturate(dot(normalWS, mainLight.direction));
                 half3 lighting = ambient + mainLight.color * NdotL * mainLight.shadowAttenuation;
+
+                // 附加光源（多点光照）
+                #if defined(_ADDITIONAL_LIGHTS)
+                uint additionalLightsCount = GetAdditionalLightsCount();
+                for (uint lightIndex = 0u; lightIndex < additionalLightsCount; ++lightIndex)
+                {
+                    Light additionalLight = GetAdditionalLight(lightIndex, i.worldPos);
+                    float additionalNdotL = saturate(dot(normalWS, additionalLight.direction));
+                    lighting += additionalLight.color * additionalNdotL * additionalLight.distanceAttenuation * additionalLight.shadowAttenuation;
+                }
+                #endif
+
                 mainTex.rgb *= lighting;
 
                 // 强制 Alpha 为 1，防止在不透明队列中因为 Alpha 问题被过滤
