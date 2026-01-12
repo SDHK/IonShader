@@ -17,7 +17,7 @@ Shader "Test/SimpleShadowBRP"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+            #pragma multi_compile_fwdbase
             
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -36,7 +36,7 @@ Shader "Test/SimpleShadowBRP"
                 float2 uv : TEXCOORD0;
                 float3 worldNormal : TEXCOORD1;
                 float3 worldPos : TEXCOORD2;
-                SHADOW_COORDS(3)
+                UNITY_LIGHTING_COORDS(3, 4)
             };
 
             sampler2D _MainTex;
@@ -50,7 +50,7 @@ Shader "Test/SimpleShadowBRP"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
-                TRANSFER_SHADOW(o);
+                UNITY_TRANSFER_LIGHTING(o, v.uv);
                 return o;
             }
 
@@ -59,41 +59,38 @@ Shader "Test/SimpleShadowBRP"
                 // 采样贴图
                 float4 mainTex = tex2D(_MainTex, i.uv) * _Color;
                 
-                // 计算光照
-                float3 lightDir = _WorldSpaceLightPos0.xyz;
+                // 计算光照方向
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos * _WorldSpaceLightPos0.w);
                 float NdotL = saturate(dot(normalize(i.worldNormal), lightDir));
                 
-                // 采样阴影
-                float shadow = SHADOW_ATTENUATION(i);
-                
-                // 调试：显示阴影值
-                // return float4(shadow, shadow, shadow, 1);
+                // 采样阴影和光照衰减
+                UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos);
                 
                 // 最终光照
-                half3 directLighting =_LightColor0.rgb * NdotL * shadow;
-                float3 lighting = directLighting  + unity_AmbientSky.rgb;
+                half3 directLighting = _LightColor0.rgb * NdotL * atten;
+                float3 lighting = directLighting + unity_AmbientSky.rgb;
                 mainTex.rgb *= lighting;
                 return mainTex;
             }
             ENDHLSL
         }
-        
-        // ForwardAdd Pass - 处理附加光源（多点光照）
+
+        // Add pass for point and spot lights
         Pass
         {
             Tags { "LightMode" = "ForwardAdd" }
-            
-            Blend One One  // 叠加模式，用于叠加附加光源的光照
-            
+            Blend One One
+            ZWrite Off
+
             HLSLPROGRAM
-            #pragma vertex vertAdd
-            #pragma fragment fragAdd
-            #pragma multi_compile_fwdadd_fullshadows nolightmap nodirlightmap nodynlightmap novertexlight
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdadd_fullshadows
             
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
             #include "AutoLight.cginc"
-            
+
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -107,68 +104,43 @@ Shader "Test/SimpleShadowBRP"
                 float2 uv : TEXCOORD0;
                 float3 worldNormal : TEXCOORD1;
                 float3 worldPos : TEXCOORD2;
-                SHADOW_COORDS(3)
+                UNITY_LIGHTING_COORDS(3, 4)
             };
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float4 _Color;
 
-            v2f vertAdd (appdata v)
+            v2f vert (appdata v)
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
-                TRANSFER_SHADOW(o);
+                UNITY_TRANSFER_LIGHTING(o, v.uv);
                 return o;
             }
 
-            float4 fragAdd (v2f i) : SV_Target
+            float4 frag (v2f i) : SV_Target
             {
-                // 采样贴图
                 float4 mainTex = tex2D(_MainTex, i.uv) * _Color;
                 
-                // 计算附加光源方向（点光源或聚光灯）
-                float3 lightDir;
-                float atten;
-                
-                #ifdef USING_DIRECTIONAL_LIGHT
-                    // 方向光
-                    lightDir = _WorldSpaceLightPos0.xyz;
-                    atten = 1.0;
-                #else
-                    // 点光源或聚光灯
-                    float3 lightVec = _WorldSpaceLightPos0.xyz - i.worldPos;
-                    float dist = length(lightVec);
-                    lightDir = normalize(lightVec);
-                    
-                    // 距离衰减
-                    atten = 1.0 / (1.0 + dist * dist * unity_LightAtten[0].z);
-                    
-                    // 聚光灯角度衰减
-                    #ifdef SPOT
-                        float3 spotDir = normalize(_WorldSpaceLightPos0.xyz);
-                        float spotEffect = dot(lightDir, spotDir);
-                        float spotAtten = saturate((spotEffect - unity_LightAtten[0].x) / unity_LightAtten[0].y);
-                        atten *= spotAtten;
-                    #endif
-                #endif
-                
-                // 计算光照
+                // 计算光照方向（点光和聚光灯）
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos * _WorldSpaceLightPos0.w);
                 float NdotL = saturate(dot(normalize(i.worldNormal), lightDir));
                 
-                // 采样阴影
-                float shadow = SHADOW_ATTENUATION(i);
+                // 采样阴影和光照衰减
+                UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos);
                 
-                // 附加光源的光照贡献（只返回光照部分，不包含环境光）
-                half3 additionalLighting = _LightColor0.rgb * NdotL * atten * shadow;
-                
-                return float4(additionalLighting * mainTex.rgb, 0.0);
+                // 叠加光照（不加环境光）
+                half3 directLighting = _LightColor0.rgb * NdotL * atten;
+                return float4(mainTex.rgb * directLighting, 0);
             }
             ENDHLSL
         }
+        
+     
         
         Pass
         {

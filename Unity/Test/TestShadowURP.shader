@@ -1,15 +1,20 @@
-Shader "Test/SimpleShadowURP"
+Shader "Test/LambertLighting"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) =  (1, 1, 1, 1)
+        _BaseColor ("Base Color", Color) = (1, 1, 1, 1)
+        _BaseMap ("Base Map", 2D) = "white" {}
+        _Smoothness ("Smoothness", Range(0, 1)) = 0.5
     }
+
     SubShader
     {
-        // 显式指定渲染队列和类型
-        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" "Queue" = "Geometry" }
-
+        Tags 
+        { 
+            "RenderType" = "Opaque" 
+            "RenderPipeline" = "UniversalPipeline"
+            "Queue" = "Geometry"
+        }
         LOD 100
 
         Pass
@@ -17,142 +22,207 @@ Shader "Test/SimpleShadowURP"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
 
-            // --- 渲染状态强制定义 ---
-            Cull Back
-            ZWrite On
-            ZTest LEqual
-            Blend Off            // 强制不混合
-
-            // 重置模板测试，防止被其他Shader的残留值剔除
-            Stencil
-            {
-                Ref 0
-                Comp Always
-                Pass Replace
-            }
-
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
 
-            // 必需的编译指令
-            #pragma multi_compile_fog
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile _ _SHADOWS_SOFT
-            // 附加光源编译指令
+            // URP关键字
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-            // 手动定义兼容性函数
-            #ifndef LERPWHITETO_DEFINED
-            #define LERPWHITETO_DEFINED
-            inline half LerpWhiteTo(half b, half t)
+            struct Attributes
             {
-                return lerp(1.0h, b, t);
-            }
-            #endif
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
+                float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float3 worldNormal : TEXCOORD1;
-                float3 worldPos : TEXCOORD2;
+                float3 positionWS : TEXCOORD1;
+                float3 normalWS : TEXCOORD2;
+                float fogFactor : TEXCOORD3;
             };
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
-            float4 _MainTex_ST;
-            float4 _Color;
+            TEXTURE2D(_BaseMap);
+            SAMPLER(sampler_BaseMap);
 
-            v2f vert(appdata v)
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_ST;
+                float4 _BaseColor;
+                float _Smoothness;
+            CBUFFER_END
+
+            Varyings vert(Attributes input)
             {
-                v2f o;
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(v.vertex.xyz);
-                VertexNormalInputs normalInput = GetVertexNormalInputs(v.normal);
-                o.pos = vertexInput.positionCS;
-                o.worldPos = vertexInput.positionWS;
-                o.worldNormal = normalInput.normalWS;
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                return o;
+                Varyings output;
+
+                VertexPositionInputs positionInputs = GetVertexPositionInputs(input.positionOS.xyz);
+                VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS);
+
+                output.positionCS = positionInputs.positionCS;
+                output.positionWS = positionInputs.positionWS;
+                output.normalWS = normalInputs.normalWS;
+                output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
+                output.fogFactor = ComputeFogFactor(positionInputs.positionCS.z);
+
+                return output;
             }
 
-            float4 frag(v2f i) : SV_Target
+            // 兰伯特光照计算
+            float3 CalculateLambertLighting(Light light, float3 normalWS)
             {
-                float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv) * _Color;
-                //half4 mainTex = tex2D(_MainTex, i.uv);
+                float NdotL = saturate(dot(normalWS, light.direction));
+                return light.color * light.distanceAttenuation * light.shadowAttenuation * NdotL;
+            }
 
-                float3 normalWS = normalize(i.worldNormal);
-                half3 ambient = SampleSH(normalWS);
+            float4 frag(Varyings input) : SV_Target
+            {
+                // 采样基础贴图
+                float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
+                float3 albedo = baseMap.rgb * _BaseColor.rgb;
+                float alpha = baseMap.a * _BaseColor.a;
 
-                // 主光源
-                Light mainLight = GetMainLight();
-                float NdotL = saturate(dot(normalWS, mainLight.direction));
-                half3 lighting = ambient + mainLight.color * NdotL * mainLight.shadowAttenuation;
+                // 归一化法线
+                float3 normalWS = normalize(input.normalWS);
 
-                // 附加光源（多点光照）
-                #if defined(_ADDITIONAL_LIGHTS)
-                uint additionalLightsCount = GetAdditionalLightsCount();
-                for (uint lightIndex = 0u; lightIndex < additionalLightsCount; ++lightIndex)
-                {
-                    Light additionalLight = GetAdditionalLight(lightIndex, i.worldPos);
-                    float additionalNdotL = saturate(dot(normalWS, additionalLight.direction));
-                    lighting += additionalLight.color * additionalNdotL * additionalLight.distanceAttenuation * additionalLight.shadowAttenuation;
-                }
+                // 计算阴影坐标
+                float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+
+                // 主光源（平行光）
+                Light mainLight = GetMainLight(shadowCoord);
+                float3 lighting = CalculateLambertLighting(mainLight, normalWS);
+
+                // 附加光源（点光源和聚光灯）
+                #ifdef _ADDITIONAL_LIGHTS
+                    uint pixelLightCount = GetAdditionalLightsCount();
+                    for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+                    {
+                        // 对于实时阴影，shadowMask设为1（不使用烘焙阴影蒙版）
+                        half4 shadowMask = half4(1, 1, 1, 1);
+                        Light light = GetAdditionalLight(lightIndex, input.positionWS, shadowMask);
+                        lighting += CalculateLambertLighting(light, normalWS);
+                    }
                 #endif
 
-                mainTex.rgb *= lighting;
+                // 环境光
+                float3 ambient = SampleSH(normalWS) * albedo;
 
-                // 强制 Alpha 为 1，防止在不透明队列中因为 Alpha 问题被过滤
-                return float4(mainTex.rgb, 1.0);
+                // 最终颜色
+                float3 finalColor = albedo * lighting + ambient;
+
+                // 应用雾效
+                finalColor = MixFog(finalColor, input.fogFactor);
+
+                return float4(finalColor, alpha);
             }
             ENDHLSL
         }
 
-        // ShadowCaster 必须保留，否则没阴影
+        // 阴影投射Pass
         Pass
         {
             Name "ShadowCaster"
             Tags { "LightMode" = "ShadowCaster" }
+
             ZWrite On
             ZTest LEqual
-            ColorMask  0
+            ColorMask 0
+
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
+
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
             struct Attributes
             {
                 float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
             };
+
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
             };
+
+            float3 _LightDirection;
+
             Varyings ShadowPassVertex(Attributes input)
             {
                 Varyings output;
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
-                output.positionCS = vertexInput.positionCS;
+                
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+
+                // 应用阴影偏移
+                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
+
+                #if UNITY_REVERSED_Z
+                    positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #else
+                    positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #endif
+
+                output.positionCS = positionCS;
                 return output;
             }
-            half4 ShadowPassFragment(Varyings input) : SV_TARGET
+
+            float4 ShadowPassFragment(Varyings input) : SV_Target
+            {
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        // 深度Pass
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+
+            ZWrite On
+            ColorMask 0
+
+            HLSLPROGRAM
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+            };
+
+            Varyings DepthOnlyVertex(Attributes input)
+            {
+                Varyings output;
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                return output;
+            }
+
+            float4 DepthOnlyFragment(Varyings input) : SV_Target
             {
                 return 0;
             }
             ENDHLSL
         }
     }
+
+    FallBack "Hidden/Universal Render Pipeline/FallbackError"
 }
