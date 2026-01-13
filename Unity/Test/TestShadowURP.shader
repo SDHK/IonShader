@@ -52,6 +52,7 @@ Shader "Test/LambertLighting"
                 float fogFactor : TEXCOORD3;
             };
 
+
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
 
@@ -93,12 +94,8 @@ Shader "Test/LambertLighting"
 
                 // 归一化法线
                 float3 normalWS = normalize(input.normalWS);
-
-                // 计算阴影坐标
-                float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
-
                 // 主光源（平行光）
-                Light mainLight = GetMainLight(shadowCoord);
+                Light mainLight = GetMainLight();
                 float3 lighting = CalculateLambertLighting(mainLight, normalWS);
 
                 // 附加光源（点光源和聚光灯）
@@ -136,13 +133,15 @@ Shader "Test/LambertLighting"
             ZWrite On
             ZTest LEqual
             ColorMask 0
+            Cull Back
 
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
+            // 点光源阴影需要这个关键字
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             struct Attributes
             {
@@ -156,28 +155,26 @@ Shader "Test/LambertLighting"
             };
 
             float3 _LightDirection;
+            float3 _LightPosition;
+
+            // 获取正确的阴影投射位置
+            float4 GetShadowPositionHClip(Attributes input)
+            {
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                // 应用阴影偏移
+                float4 positionCS = TransformWorldToHClip(positionWS);
+                return positionCS;
+            }
+
 
             Varyings ShadowPassVertex(Attributes input)
             {
                 Varyings output;
-                
-                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
-
-                // 应用阴影偏移
-                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
-
-                #if UNITY_REVERSED_Z
-                    positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #else
-                    positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #endif
-
-                output.positionCS = positionCS;
+                output.positionCS = GetShadowPositionHClip(input);
                 return output;
             }
 
-            float4 ShadowPassFragment(Varyings input) : SV_Target
+            half4 ShadowPassFragment(Varyings input) : SV_Target
             {
                 return 0;
             }
