@@ -29,8 +29,6 @@
 #ifndef Def_IonPass
 #define Def_IonPass
 
-//===[引入核心宏定义]===
-#include "../IonMacro.hlsl"
 
 //===[引入Pass库]===
 
