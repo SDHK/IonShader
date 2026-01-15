@@ -23,7 +23,7 @@
 half3 IonLight_Lambert(float3 normalWS, float3 lightDirection, half3 lightColor, half shadowAttenuation, float distanceAttenuation)
 {
     // 计算法线与光源方向的点积（Lambert 系数）
-    float ratio = saturate(dot(normalWS, lightDirection));
+    float ratio = saturate(dot(normalize(normalWS), lightDirection));
     
     // 计算光照贡献：光源颜色 * Lambert 系数 * 距离衰减 * 阴影衰减
     return lightColor * ratio * distanceAttenuation * shadowAttenuation;

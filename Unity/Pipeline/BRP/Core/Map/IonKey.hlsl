@@ -103,7 +103,7 @@
 // 注意：IonKey_ForwardBase 是空定义（不映射到 Unity 关键字），仅用于触发变体生成
 // BRP 的 fwdbase 变体包含光照和阴影信息，代码中无需判断此关键字，Unity 会自动选择正确的变体
 #ifdef IonKey_ForwardBase
-#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+#pragma multi_compile_fwdbase
 #define IonKey_ForwardBase
 #endif
 

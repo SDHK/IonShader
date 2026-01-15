@@ -104,8 +104,7 @@ Shader "Test/LambertLighting"
                     for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
                     {
                         // 对于实时阴影，shadowMask设为1（不使用烘焙阴影蒙版）
-                        half4 shadowMask = half4(1, 1, 1, 1);
-                        Light light = GetAdditionalLight(lightIndex, input.positionWS, shadowMask);
+                        Light light = GetAdditionalLight(lightIndex, input.positionWS);
                         lighting += CalculateLambertLighting(light, normalWS);
                     }
                 #endif

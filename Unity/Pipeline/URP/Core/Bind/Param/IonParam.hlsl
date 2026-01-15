@@ -83,20 +83,9 @@
 //float4 地面环境光颜色（RGB）和强度（A）
 #define IonParam_AmbientGround unity_AmbientGround
 //float4 主光源位置/方向（世界空间）。xyz:位置/方向，w:0=方向光，1=点光源
-#define IonParam_WorldSpaceLightPos0 _WorldSpaceLightPos0
+#define IonParam_WorldSpaceLightPos _WorldSpaceLightPos0
 //float4 主光源颜色（RGB）和强度（A）
-#define IonParam_LightColor0 _LightColor0
-
-//===[多光源]===
-
-//float4 4个光源的X坐标
-#define IonParam_4LightPosX0 unity_4LightPosX0
-//float4 4个光源的Y坐标
-#define IonParam_4LightPosY0 unity_4LightPosY0
-//float4 4个光源的Z坐标
-#define IonParam_4LightPosZ0 unity_4LightPosZ0
-//float4 4个光源的衰减系数
-#define IonParam_4LightAtten0 unity_4LightAtten0
+#define IonParam_LightColor _LightColor0
 
 //===[球谐光照]===
 

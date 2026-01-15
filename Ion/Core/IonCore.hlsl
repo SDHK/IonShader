@@ -1,4 +1,5 @@
-/*
+/****************************************
+*
 * 作者： 闪电黑客
 * 日期： 2025/12/5 10:29
 *
@@ -36,8 +37,6 @@
 // 注意：Map 必须在 Library 之前引入，以便 Unity 库代码能正确识别关键字
 #ifdef Inc_IonMap
 #include Inc_IonMap
-#else
-#include "Map/IonLinkMap.hlsl"
 #endif
 
 //===[环境库引用]===

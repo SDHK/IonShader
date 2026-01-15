@@ -23,14 +23,13 @@
 #include "../IonConfig.hlsl"
 
 //===[引入引擎绑定]===
-#ifdef IonShader_BRP
-#include "Pipeline/BRP/Core/IonCoreBRP.hlsl"
-#elif defined(IonShader_URP)
-#include "Pipeline/URP/Core/IonCoreURP.hlsl"
+#if defined(IonShader_BRP)
+#include "Pipeline/BRP/IonBindCore.hlsl"
 #endif
 
-//===[加载 Ion Shader 库入口]===
-#include "../Ion/Pass/IonPass.hlsl"
-#include "../Ion/Core/IonCore.hlsl"
+#if defined(IonShader_URP)
+#include "Pipeline/URP/IonBindCore.hlsl"
 #endif
 
+
+#endif
