@@ -110,8 +110,7 @@ float4 IonShadowCaster_PositionCS(float4 positionOS, float3 normalOS)
 
 float3 IonShadowCaster_Vector(float4 positionOS)
 {
-    float3 worldPos = IonMatrix_ObjectToWorld(positionOS).xyz;
-    // float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
+    float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
 #if defined(SHADOWS_CUBE)
     // 点光源阴影
     return worldPos - _LightPositionRange.xyz;
@@ -127,7 +126,11 @@ float3 IonShadowCaster_Vector(float4 positionOS)
 // 计算阴影衰减（基于距离）
 half IonShadowCaster_Fragment(float3 vec)
 {
-    return (length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w;
+    #if defined(SHADOWS_CUBE) && !defined(SHADOWS_CUBE_IN_DEPTH_TEX)
+    return UnityEncodeCubeShadowDepth((length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w);
+    #else
+    return 0;
+    #endif
 }
 
 
