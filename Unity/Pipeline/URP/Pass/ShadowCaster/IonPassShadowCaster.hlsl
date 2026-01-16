@@ -22,7 +22,6 @@ float PassVar_Scale = 1.0;
 #define IonKey_ShadowCaster
 
 #define Link_IonBase
-#define Link_IonLight
 #define Link_IonMatrix
 #include "../../Core/IonCore.hlsl"
 
@@ -39,7 +38,7 @@ struct FragData
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    fragData.PositionCS = TransformObjectToHClip(vertData.PositionOS.xyz);
+    fragData.PositionCS = IonMatrix_ObjectToClip(vertData.PositionOS);
     return fragData;
 }
 

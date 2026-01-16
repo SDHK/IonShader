@@ -34,9 +34,10 @@ struct VertData
 
 struct FragData
 {
-    IonVar_PositionCS
-    IonVar_T0(float3,LightVector3)
+    //IonVar_PositionCS
+    //IonVar_T0(float3,LightVector3)
 
+    V2F_SHADOW_CASTER;
 };
 
 FragData vert(VertData vertData)
@@ -45,17 +46,18 @@ FragData vert(VertData vertData)
     
     // 应用Scale扩展（与Outline Pass保持一致）
     float3 position3 = vertData.PositionOS.xyz + vertData.Normal * PassVar_Scale;
-    float4 positionOSScaled = float4(position3, vertData.PositionOS.w);
-    
-    fragData.PositionCS = IonShadowCaster_PositionCS(positionOSScaled, vertData.Normal); 
-    fragData.LightVector3 = IonShadowCaster_Vector(positionOSScaled);
+    float4 positionOS = float4(position3, vertData.PositionOS.w);
+    fragData.pos = IonShadowCaster_PositionCS(positionOS, vertData.Normal); 
+    fragData.vec = IonShadowCaster_Vector(positionOS);
     return fragData;
 }
 
 
 half4 frag(FragData fragData) : SV_Target
 {
-    return IonShadowCaster_Fragment(fragData.LightVector3);
+    SHADOW_CASTER_FRAGMENT(fragData)
+
+    //return IonShadowCaster_Fragment(fragData.LightVector3);
 }
 
 #endif // Def(IonPassShadowCaster)

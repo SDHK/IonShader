@@ -108,11 +108,20 @@ float4 IonShadowCaster_PositionCS(float4 positionOS, float3 normalOS)
     return UnityApplyLinearShadowBias(positionCS);
 }
 
-// 计算从光源位置到顶点的向量（用于距离衰减）
 float3 IonShadowCaster_Vector(float4 positionOS)
 {
-    float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
+    float3 worldPos = IonMatrix_ObjectToWorld(positionOS).xyz;
+    // float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
+#if defined(SHADOWS_CUBE)
+    // 点光源阴影
     return worldPos - _LightPositionRange.xyz;
+#elif defined(SHADOWS_DEPTH) && defined(SPOT)
+    // 聚光灯阴影
+    return worldPos - _WorldSpaceLightPos0.xyz;
+#else
+    // 方向光阴影
+    return -_WorldSpaceLightPos0.xyz;
+#endif
 }
 
 // 计算阴影衰减（基于距离）

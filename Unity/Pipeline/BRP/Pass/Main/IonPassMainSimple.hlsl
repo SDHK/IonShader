@@ -1,6 +1,5 @@
 ﻿
 
-
 #if Def(IonPassMainSimple)
 #define Def_IonPassMainSimple
 
@@ -55,9 +54,9 @@ FragData vert(VertData vertData)
 {
     FragData fragData;
     
+    fragData.UV = IonMath_Transform2D(vertData.UV.xy, PassVar_MainTex_ST.xy,PassVar_MainTex_ST.zw);
     // 计算世界空间位置
     fragData.PositionCS = IonMatrix_ObjectToClip(vertData.PositionOS);
-    fragData.UV = Ion_Transform_TEX(vertData.UV,PassVar_MainTex_ST);
 
     // 将法线转换到世界空间（使用法线专用函数）
     fragData.NormalWS = IonMatrix_ObjectToWorldNormal(vertData.Normal);

@@ -10,7 +10,11 @@
 #if DefPart(IonDistort, Tool) 
 #define Def_IonDistort_Tool
 
-//极坐标扭曲 
+// 极坐标扭曲 
+// float2 uv: 输入的UV坐标
+// float distortAngle: 扭曲的角度
+// float scale = 1: 扭曲的缩放比例
+// float2 return: 扭曲后的UV坐标
 float2 IonDistort_Polar(float2 uv, float distortAngle, float scale = 1)
 {
     // 定义中心点坐标
@@ -37,6 +41,11 @@ float2 IonDistort_Polar(float2 uv, float distortAngle, float scale = 1)
 
 
 //旋涡扭曲
+// float2 uv: 输入的UV坐标
+// float distortAngle: 扭曲的角度
+// float scale = 1: 扭曲的缩放比例
+// float2 center = (0.5, 0.5): 扭曲的中心点
+// float2 return: 扭曲后的UV坐标
 float2 IonDistort_Vortex(float2 uv, float distortAngle, float scale = 1, float2 center = (0.5, 0.5))
 {
     // 计算 UV 坐标相对于中心点的偏移量,中心指向uv的向量
@@ -63,9 +72,10 @@ float2 IonDistort_Vortex(float2 uv, float distortAngle, float scale = 1, float2 
 
 
 // 球面扭曲
-// uv: 输入的UV坐标
-// center: 扭曲的中心点
-// radius: 扭曲的半径
+// float2 uv: 输入的UV坐标
+// float radius: 扭曲的半径
+// float2 center = (0.5, 0.5): 扭曲的中心点
+// float2 return: 扭曲后的UV坐标
 float2 IonDistort_Sphere(float2 uv, float radius, float2 center = (0.5, 0.5))
 {
     // 计算 UV 坐标相对于中心点的偏移量
@@ -91,10 +101,11 @@ float2 IonDistort_Sphere(float2 uv, float radius, float2 center = (0.5, 0.5))
 
 
 // 波浪扭曲
-// uv: 输入的UV坐标
-// amplitude: 扭曲的振幅
-// frequency: 扭曲的频率
-// phase: 扭曲的相位
+// float2 uv: 输入的UV坐标
+// float amplitude: 波浪的振幅
+// float frequency: 波浪的频率
+// float phase: 波浪的相位
+// float2 return: 扭曲后的UV坐标
 float2 IonDistort_Wave(float2 uv, float amplitude, float frequency, float phase)
 {
     uv.x += sin(uv.y * frequency + phase) * amplitude;

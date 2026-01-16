@@ -26,8 +26,6 @@ float PassVar_Scale = 1.0;
 
 #define Link_IonBase
 #define Link_IonMatrix
-#define Link_IonMath
-#define Link_IonVertex
 #include "../../Core/IonCore.hlsl"
 
 struct VertData
@@ -47,7 +45,7 @@ FragData vert(VertData vertData)
     FragData fragData;
 
     float3 position3 = vertData.PositionOS.xyz + vertData.Normal * PassVar_Scale;
-    fragData.PositionCS = mul(IonParam_Matrix_MVP,float4( position3,1));
+    fragData.PositionCS = IonMatrix_ObjectToClip(float4(position3, 1.0));
     return fragData;
 }
             

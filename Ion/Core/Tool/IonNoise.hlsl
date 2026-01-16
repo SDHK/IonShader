@@ -13,6 +13,9 @@
 #define Link_IonHash
 #include "../IonEdit.hlsl"
 
+// 随机数函数
+// float3 c: 输入的三维坐标
+// float3 return: 生成的随机三维向量，范围在 [-0.5, 0.5]
 float3 IonNoise_Random3(float3 c)
 {
     float j = 4096.0 * sin(dot(c, float3(17.0, 59.4, 15.0)));
@@ -24,7 +27,9 @@ float3 IonNoise_Random3(float3 c)
     r.y = frac(512.0 * j);
     return r - 0.5;
 }
-
+// 随机数二维
+// float2 c: 输入的二维坐标
+// float2 return: 生成的随机二维向量，范围在 [-0.5, 0.5]
 float2 IonNoise_Random2(float2 c)
 {
     float j = 4096.0 * sin(dot(c, float2(17.0, 59.4)));
@@ -34,7 +39,9 @@ float2 IonNoise_Random2(float2 c)
     r.y = frac(512.0 * j);
     return r - 0.5;
 }
-
+// 随机数一维
+// float c: 输入的浮点数
+// float return: 生成的随机浮点数，范围在 [-0.5, 0.5]
 float IonNoise_Random(float c)
 {
     float j = 4096.0 * sin(dot(c, 17.0));
@@ -44,19 +51,25 @@ float IonNoise_Random(float c)
     return r - 0.5;
 }
 
-//一维噪声
+// 一维噪声
+// float x: 输入的浮点数
+// float return: 生成的一维噪声值
 float IonNoise_1D(float x)
 {
     return frac(sin(x) * 1000);
 }
 
-//栅格噪声
+// 栅格噪声
+// float x: 输入的浮点数
+// float return: 生成的栅格噪声值
 float IonNoise_Grid(float x)
 {
     return noise(floor(x));
 }
 
-//平滑噪声
+// 平滑噪声
+// float x: 输入的浮点数
+// float return: 生成的平滑噪声值
 float IonNoise_Lerp(float x)
 {
     float t = frac(x);
@@ -67,13 +80,18 @@ float IonNoise_Lerp(float x)
 
 
 
-//白噪声
+// 白噪声
+// float2 uv: 输入的二维坐标
+// float time = 0: 时间参数，用于动画效果
+// float return: 生成的白噪声值
 float IonNoise_White(float2 uv, float time = 0)
 {
     return frac(sin(dot(uv, float2(12.9898, 78.233) + time)) * 43758.5453123);
 }
 
-//值噪声
+// 值噪声
+// float2 uv: 输入的二维坐标
+// float return: 生成的值噪声值
 float IonNoise_Value(float2 uv)
 {
     // 将时间参数引入到 uv 的计算中
@@ -101,7 +119,9 @@ float IonNoise_Value(float2 uv)
 }
 
 
-//柏林噪声
+// 柏林噪声
+// float2 uv: 输入的二维坐标
+// float return: 生成的柏林噪声值
 float IonNoise_Perlin(float2 uv)
 {
     float2 intPos = floor(uv);
@@ -124,7 +144,9 @@ float IonNoise_Perlin(float2 uv)
     return value;
 }
 
-//简单噪声
+// 简单噪声
+// float2 uv: 输入的二维坐标
+// float time = 0: 时间参数，用于动画效果
 float IonNoise_Simple(float2 uv, float time = 0)
 {
     const float K1 = 0.366025404; // (sqrt(3)-1)/2;
@@ -143,7 +165,9 @@ float IonNoise_Simple(float2 uv, float time = 0)
 
 
 
-//泰森多边形
+// 泰森多边形
+// float2 uv: 输入的二维坐标
+// float time = 0: 时间参数，用于动画效果
 float IonNoise_Voronoi(float2 uv, float time = 0)
 {
     float dist= 16;
@@ -164,7 +188,9 @@ float IonNoise_Voronoi(float2 uv, float time = 0)
 }
 
 
-//泰森多边形
+// 泰森多边形 
+// float2 uv: 输入的二维坐标
+// float time = 0: 时间参数，用于动画效果
 float IonNoise_Worley(float2 uv, float time = 0)
 {
     float2 index = floor(uv);
@@ -187,7 +213,9 @@ float IonNoise_Worley(float2 uv, float time = 0)
     return d.y - d.x;
 }
 
-//分形布朗运动
+// 分形布朗运动
+// float2 uv: 输入的二维坐标
+// float return: 生成的分形布朗运动值
 float IonNoise_FBMvalue(float2 uv)
 {
     float value = 0;
@@ -204,12 +232,12 @@ float IonNoise_FBMvalue(float2 uv)
 }
 
 //云雾噪声
-// uv: 输入的UV坐标
-// time: 时间参数，用于动画效果
-// uvSpeed: UV移动速度
-// scale: 缩放
-// dir: 扰动方向
-// 返回值: 生成的云雾噪声值,当色彩权重用
+// float2 uv: 输入的二维坐标
+// float time = 0: 时间参数，用于动画效果
+// float uvSpeed=10: UV移动速度
+// float scale =1: 细节缩放
+// float2 dir = float2(0.0, 0.10): UV移动方向
+// float return: 生成的云雾噪声值
 float IonNoise_Smoke(float2 uv, float time = 0, float uvSpeed=10, float scale =1, float2 dir = float2(0.0, 0.10))
 {
     float2 q = float2(0.0, 0.0);
@@ -228,9 +256,9 @@ float IonNoise_Smoke(float2 uv, float time = 0, float uvSpeed=10, float scale =1
 }
 
 // 高斯模糊
-// _MainTex: 输入的纹理
-// uv: 输入的UV坐标
-// blur: 模糊的程度
+// sampler2D _MainTex: 输入的纹理采样器
+// float2 uv: 输入的二维坐标
+// float blur: 模糊强度
 float4 IonNoise_BlurGaussian(sampler2D _MainTex, float2 uv, float blur)
 {
     // 1 / 16
