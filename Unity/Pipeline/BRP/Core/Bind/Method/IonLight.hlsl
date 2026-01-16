@@ -20,7 +20,7 @@ IonStruct_Light IonLight_MainLight()
 {
     IonStruct_Light light;
     
-    float4 lightPos = IonParam_WorldSpaceLightPos0;
+    float4 lightPos = IonParam_WorldSpaceLightPos;
     
     // 判断光源类型并计算方向
     if (lightPos.w == 0.0)
@@ -39,7 +39,7 @@ IonStruct_Light IonLight_MainLight()
     }
     
     // BRP中 _LightColor0 的 RGB 是颜色，A 是强度
-    light.Color = IonParam_LightColor0;
+    light.Color = IonParam_LightColor;
 
     // BRP中阴影衰减需要采样阴影贴图，这里默认设为1.0
     // 如果需要阴影，需要使用带参数的版本
