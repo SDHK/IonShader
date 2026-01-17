@@ -97,42 +97,41 @@ float4 IonLight_ShadowCoord(float4 positionOS, float4 positionCS, float3 positio
 }
 
 
-
 //===[阴影投射相关方法] ===
 // 这些方法用于 ShadowCaster Pass 中投射阴影
 
-// BRP阴影投射
+// 计算阴影投射顶点位置（在vertex shader中调用）
 float4 IonShadowCaster_PositionCS(float4 positionOS, float3 normalOS)
 {
-    float4 positionCS = UnityClipSpaceShadowCasterPos(positionOS, normalOS);
-    return UnityApplyLinearShadowBias(positionCS);
-}
-
-float3 IonShadowCaster_Vector(float4 positionOS)
-{
-    float3 worldPos = mul(unity_ObjectToWorld, positionOS).xyz;
-#if defined(SHADOWS_CUBE)
-    // 点光源阴影
-    return worldPos - _LightPositionRange.xyz;
-#elif defined(SHADOWS_DEPTH) && defined(SPOT)
-    // 聚光灯阴影
-    return worldPos - _WorldSpaceLightPos0.xyz;
-#else
-    // 方向光阴影
-    return -_WorldSpaceLightPos0.xyz;
-#endif
-}
-
-// 计算阴影衰减（基于距离）
-half IonShadowCaster_Fragment(float3 vec)
-{
+    // 将为点光源生成立方体阴影贴图的情况单独处理
     #if defined(SHADOWS_CUBE) && !defined(SHADOWS_CUBE_IN_DEPTH_TEX)
-    return UnityEncodeCubeShadowDepth((length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w);
-    #else
-    return 0;
+        return UnityObjectToClipPos(positionOS);
+    #else  // 生成定向或点光源阴影
+        float4 positionCS = UnityClipSpaceShadowCasterPos(positionOS, normalOS);
+        return UnityApplyLinearShadowBias(positionCS);
     #endif
 }
 
+// 计算光源到顶点的向量（在vertex shader中调用）
+float3 IonShadowCaster_Vector(float4 positionOS)
+{
+    // 点光源阴影
+    #if defined(SHADOWS_CUBE) && !defined(SHADOWS_CUBE_IN_DEPTH_TEX)
+        return mul(unity_ObjectToWorld, positionOS).xyz - _LightPositionRange.xyz;
+    #else // 定向光/聚光灯阴影不需要vec，返回0就行
+        return float3(0, 0, 0);
+    #endif
+}
 
+// 计算阴影投射顶点的颜色（在fragment shader中调用）
+half IonShadowCaster_Fragment(float3 vec)
+{
+    // 点光源立方体阴影
+    #if defined(SHADOWS_CUBE) && !defined(SHADOWS_CUBE_IN_DEPTH_TEX)
+    return UnityEncodeCubeShadowDepth((length(vec) + unity_LightShadowBias.x) * _LightPositionRange.w);
+    #else // 定向光/聚光灯阴影不需要距离衰减，返回0
+    return 0;
+    #endif
+}
 
 #endif
