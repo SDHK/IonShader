@@ -73,41 +73,49 @@ IonStruct_Light IonLight_MainLight()
 IonStruct_Light IonLight_MainLight(float4 shadowCoord)
 {
     IonStruct_Light light = IonLight_MainLight();
-#ifdef SHADOWS_SCREEN
-    light.ShadowAttenuation = unitySampleShadow(shadowCoord);
-#endif
+    #if defined(SHADOWS_SCREEN)
+        #if defined(UNITY_NO_SCREENSPACE_SHADOWS)
+            #if defined(SHADOWS_NATIVE)
+                light.ShadowAttenuation = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);
+                light.ShadowAttenuation = _LightShadowData.r + light.ShadowAttenuation * (1-_LightShadowData.r);
+            #else
+                unityShadowCoord dist = SAMPLE_DEPTH_TEXTURE(_ShadowMapTexture, shadowCoord.xy);
+                unityShadowCoord threshold = shadowCoord.z;
+                light.ShadowAttenuation = max(dist > threshold, _LightShadowData.x);
+            #endif
+        #else
+            light.ShadowAttenuation = UNITY_SAMPLE_SCREEN_SHADOW(_ShadowMapTexture, shadowCoord);
+        #endif
+    #endif
     return light;
 }
 
 // 计算光照衰减（ForwardAdd Pass 专用，在 fragment shader 中调用）
-// 参数：lightCoord - 光照坐标（float3），由 IonLight_LightCoord 计算
+// 参数：lightCoord - 光照坐标（float4），由 IonLight_LightCoord 计算
 // 参数：shadowCoord - 阴影坐标（float4），由 IonLight_ShadowCoord 计算
 // 返回值：衰减值（float），包含距离衰减和阴影衰减的组合
 // 说明：此函数用于 ForwardAdd Pass，计算点光源和聚光灯的衰减
 //       包含距离衰减、Cookie、阴影衰减等所有因素
-float IonLight_Attenuation(float3 lightCoord, float4 shadowCoord)
+float IonLight_Attenuation(float4 lightCoord, float4 shadowCoord)
 {
     // 计算阴影衰减
     float shadowAttenuation = 1.0;
-    #if defined(SHADOWS_DEPTH) || defined(SHADOWS_SCREEN) || defined(SHADOWS_CUBE)
-        #if defined(SHADOWS_SCREEN)
-            shadowAttenuation = unitySampleShadow(shadowCoord);
-        #elif defined(SHADOWS_DEPTH) && defined(SPOT)
-            shadowAttenuation = unitySampleShadow(shadowCoord);
-        #elif defined(SHADOWS_CUBE)
-            shadowAttenuation = UnitySampleShadowmap(shadowCoord.xyz);
-        #endif
+    #if defined(SHADOWS_DEPTH) && defined(SPOT)
+        // 聚光灯阴影：使用深度贴图采样
+        shadowAttenuation = UnitySampleShadowmap(shadowCoord);
+    #elif defined(SHADOWS_CUBE)
+        // 点光源立方体阴影：使用立方体贴图采样
+        shadowAttenuation = UnitySampleShadowmap(shadowCoord.xyz);
     #endif
     
     // 计算距离衰减
     float distanceAttenuation = 1.0;
     #if defined(POINT)
         // 点光源：使用光照纹理采样距离衰减
-        distanceAttenuation = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).r;
+        distanceAttenuation = tex2D(_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).rr).r;
     #elif defined(SPOT)
         // 聚光灯：计算距离衰减、Cookie 和聚光锥衰减
-        float4 lightCoord4 = float4(lightCoord, 1.0);
-        distanceAttenuation = (lightCoord4.z > 0.0) * UnitySpotCookie(lightCoord4) * UnitySpotAttenuate(lightCoord4.xyz);
+        distanceAttenuation = (lightCoord.z > 0.0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz);
     #endif
     
     // 返回组合衰减：距离衰减 * 阴影衰减
@@ -117,20 +125,32 @@ float IonLight_Attenuation(float3 lightCoord, float4 shadowCoord)
 
 //===[光照坐标计算] ===
 // ForwardAdd Pass 需要计算光照坐标（用于距离衰减）
+// 对应 Unity 的 COMPUTE_LIGHT_COORDS 宏
 
 // 计算光照坐标（在 vertex shader 中调用）
-// 参数：positionWS - 世界空间位置（float3）
-// 返回值：光照坐标（float3），用于后续计算距离衰减
-// 说明：点光源和聚光灯需要光照坐标来计算距离衰减
-//       平行光不需要（ForwardBase），返回 (0,0,0) 即可
-float3 IonLight_LightCoord(float3 positionWS)
+// 参数：positionOS - 物体空间位置（float4）
+// 返回值：光照坐标（float4），用于后续计算距离衰减
+// 说明：点光源返回 float3（xyz），聚光灯返回 float4（xyzw），平行光返回 (0,0,0,0)
+float4 IonLight_LightCoord(float4 positionOS)
 {
-    #if defined(POINT) || defined(SPOT)
-        // 点光源和聚光灯：返回世界空间到光源的向量
-        return mul(unity_WorldToLight, float4(positionWS, 1.0)).xyz;
+    #if defined(POINT)
+        // 点光源：返回世界空间到光源空间的变换（float3）
+        float3 lightCoord3 = mul(unity_WorldToLight, mul(unity_ObjectToWorld, positionOS)).xyz;
+        return float4(lightCoord3, 0.0);
+    #elif defined(SPOT)
+        // 聚光灯：返回世界空间到光源空间的变换（float4）
+        return mul(unity_WorldToLight, mul(unity_ObjectToWorld, positionOS));
+    #elif defined(POINT_COOKIE)
+        // 点光源 Cookie：返回世界空间到光源空间的变换（float3）
+        float3 lightCoord3 = mul(unity_WorldToLight, mul(unity_ObjectToWorld, positionOS)).xyz;
+        return float4(lightCoord3, 0.0);
+    #elif defined(DIRECTIONAL_COOKIE)
+        // 平行光 Cookie：返回世界空间到光源空间的变换（float2）
+        float2 lightCoord2 = mul(unity_WorldToLight, mul(unity_ObjectToWorld, positionOS)).xy;
+        return float4(lightCoord2, 0.0, 0.0);
     #else
         // 平行光或无光源：不需要光照坐标
-        return float3(0, 0, 0);
+        return float4(0, 0, 0, 0);
     #endif
 }
 

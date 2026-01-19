@@ -63,7 +63,8 @@ struct FragData
     IonVar_T2(float3, PositionWS)
     // 光照坐标（用于距离衰减计算）
     // 点光源和聚光灯需要此坐标来计算距离衰减
-    IonVar_T3(float3, LightCoord)
+    // 根据光源类型可能是 float3 或 float4，这里统一声明 float4
+    IonVar_T3(float4, LightCoord)
     // 阴影坐标（用于阴影采样）
     // 根据阴影类型可能使用 float3 或 float4，这里统一声明 float4
     IonVar_T4(float4, ShadowCoord)
@@ -86,9 +87,11 @@ FragData vert(VertData vertData)
     fragData.PositionWS = IonMatrix_ObjectToWorld(vertData.PositionOS);
     
     // 计算光照坐标（用于距离衰减）
-    fragData.LightCoord = IonLight_LightCoord(fragData.PositionWS);
+    // 对应 Unity 的 COMPUTE_LIGHT_COORDS 宏
+    fragData.LightCoord = IonLight_LightCoord(vertData.PositionOS);
     
     // 计算阴影坐标（用于阴影采样）
+    // 对应 Unity 的 TRANSFER_SHADOW 宏
     fragData.ShadowCoord = IonLight_ShadowCoord(vertData.PositionOS, fragData.PositionCS, fragData.PositionWS);
     
     return fragData;

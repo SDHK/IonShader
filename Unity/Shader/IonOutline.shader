@@ -102,6 +102,20 @@ Shader "Ion/IonOutline"
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
         }
+                // ===[附加光照]===
+        Pass
+        {
+            Name "ADDITIONAL"
+            Tags { "LightMode" = "ForwardAdd" }
+            Blend One One
+            ZWrite Off
+            HLSLPROGRAM
+            #define PassVar_MainTex _MainTex
+            #define PassVar_MainTex_ST _MainTex_ST
+            #define Link_IonPassMainAdd
+            #include "../IonCoreUnity.hlsl"
+            ENDHLSL
+        }
         // ===[阴影投射]===
         Pass
         {
