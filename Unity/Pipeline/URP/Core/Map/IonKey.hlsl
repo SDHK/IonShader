@@ -37,6 +37,13 @@
 #define IonKey_ShadowsSoft defined(_SHADOWS_SOFT)
 #endif
 
+// 附加光源：生成 #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+// 代码中使用 #if IonKey_AdditionalLights 判断是否有附加光源（点光源、聚光灯）
+#ifdef IonKey_AdditionalLights
+#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+#define IonKey_AdditionalLights defined(_ADDITIONAL_LIGHTS)
+#endif
+
 // 附加光源阴影：生成 #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
 // 代码中使用 #if IonKey_AdditionalLightShadows 判断是否有附加光源阴影
 #ifdef IonKey_AdditionalLightShadows

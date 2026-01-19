@@ -13,6 +13,6 @@
 //===[定义Unity的方法宏]===
 
 // 纹理坐标缩放偏移 float2  2d纹理 => float2 :TRANSFORM_TEX(uv,tex)
-#define Ion_Transform_TEX(uv,texST)  ((uv.xy) * texST.xy + texST.zw)
+//#define Ion_Transform_TEX(uv,texST)  ((uv.xy) * texST.xy + texST.zw)
 
 #endif

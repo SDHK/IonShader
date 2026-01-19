@@ -11,7 +11,23 @@
 #define Def_IonLight_Bind
 
 
-//===[主光源获取]===
+//===[光源获取]===
+
+// 获取光源方向（统一接口，用于 ForwardBase 和 ForwardAdd）
+// 参数：positionWS - 世界空间位置（float3）
+// 返回值：归一化的光源方向（float3）
+// 说明：BRP中 _WorldSpaceLightPos0.w = 0 表示平行光，w = 1 表示点光源/聚光灯
+//       平行光：直接使用 _WorldSpaceLightPos0.xyz
+//       点光源/聚光灯：从光源位置到顶点位置的方向
+float3 IonLight_Direction(float3 positionWS)
+{
+    float4 lightPos = IonParam_WorldSpaceLightPos;
+    
+    // w = 0：平行光，直接返回方向
+    // w = 1：点光源/聚光灯，计算从顶点指向光源的方向
+    float3 lightDir = lightPos.xyz - positionWS * lightPos.w;
+    return normalize(lightDir);
+}
 
 // 获取主光源信息（无阴影支持版本）
 // 返回值：IonStruct_Light 结构体，包含光源方向、颜色、衰减等信息
@@ -60,6 +76,34 @@ IonStruct_Light IonLight_MainLight(float4 shadowCoord)
 #ifdef SHADOWS_SCREEN
     light.ShadowAttenuation = unitySampleShadow(shadowCoord);
 #endif
+    return light;
+}
+
+// 获取附加光源信息（ForwardAdd Pass 专用）
+// 参数：positionWS - 世界空间位置（float3）
+// 参数：shadowCoord - 阴影坐标（float4），用于采样阴影
+// 返回值：IonStruct_Light 结构体，包含光源方向、颜色、衰减等信息
+// 说明：此函数用于 ForwardAdd Pass，获取点光源和聚光灯信息
+//       注意：衰减值需要通过 UNITY_LIGHT_ATTENUATION 宏在调用处计算
+//       因为该宏需要特殊的变量名和作用域，无法封装在函数内
+IonStruct_Light IonLight_AdditionalLight(float3 positionWS, float attenuation)
+{
+    IonStruct_Light light;
+    
+    // 计算光源方向（点光源/聚光灯）
+    light.Direction = IonLight_Direction(positionWS);
+    
+    // 光源颜色
+    light.Color = IonParam_LightColor;
+    
+    // 衰减值（包含距离衰减和阴影衰减）
+    // 由调用者通过 UNITY_LIGHT_ATTENUATION 宏计算并传入
+    light.DistanceAttenuation = attenuation;
+    light.ShadowAttenuation = attenuation;
+    
+    // LayerMask（BRP 不支持）
+    light.LayerMask = 0;
+    
     return light;
 }
 

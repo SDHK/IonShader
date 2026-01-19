@@ -45,7 +45,7 @@ Shader "Ion/IonOutline"
             HLSLPROGRAM
             #define PassVar_MainTex _MainTex
             #define PassVar_MainTex_ST _MainTex_ST
-            #define Link_IonPassMainSimple
+            #define Link_IonPassMain
             #include "../IonCoreUnity.hlsl"
             ENDHLSL
 

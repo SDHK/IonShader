@@ -12,3 +12,7 @@
 #if Link(IonPassMainSimple)
 #include "IonPassMainSimple.hlsl"
 #endif
+
+#if Link(IonPassMain)
+#include "IonPassMain.hlsl"
+#endif

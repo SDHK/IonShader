@@ -107,6 +107,15 @@
 #define IonKey_ForwardBase
 #endif
 
+// Forward Add：生成 #pragma multi_compile_fwdadd_fullshadows
+// 注意：IonKey_ForwardAdd 是空定义（不映射到 Unity 关键字），仅用于触发变体生成
+// BRP 的 fwdadd 变体用于附加光源（点光、聚光），每个附加光源执行一次
+// fullshadows 版本包含所有阴影类型（屏幕空间阴影、深度阴影、立方体阴影）
+#ifdef IonKey_ForwardAdd
+#pragma multi_compile_fwdadd_fullshadows
+#define IonKey_ForwardAdd
+#endif
+
 //===[纹理相关关键字映射]===
 
 // 法线贴图：IonKey_NormalMap -> _NORMALMAP
