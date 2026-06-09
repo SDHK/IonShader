@@ -95,16 +95,18 @@ Shader "Test/LambertLighting"
                 // 归一化法线
                 float3 normalWS = normalize(input.normalWS);
                 // 主光源（平行光）
-                Light mainLight = GetMainLight();
+                float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+                Light mainLight = GetMainLight(shadowCoord);
                 float3 lighting = CalculateLambertLighting(mainLight, normalWS);
 
                 // 附加光源（点光源和聚光灯）
                 #ifdef _ADDITIONAL_LIGHTS
+                    // half4(1,1,1,1) 表示纯实时阴影，不混合烘焙阴影蒙版
+                    half4 shadowMask = half4(1.0h, 1.0h, 1.0h, 1.0h);
                     uint pixelLightCount = GetAdditionalLightsCount();
                     for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
                     {
-                        // 对于实时阴影，shadowMask设为1（不使用烘焙阴影蒙版）
-                        Light light = GetAdditionalLight(lightIndex, input.positionWS);
+                        Light light = GetAdditionalLight(lightIndex, input.positionWS, shadowMask);
                         lighting += CalculateLambertLighting(light, normalWS);
                     }
                 #endif

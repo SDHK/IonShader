@@ -99,18 +99,21 @@ half4 frag(FragData fragData) : SV_Target
     // 1. 平行光在物理上没有距离衰减（无限远光源），distanceAttenuation 理论上总是 1.0
     // 2. URP 的 Forward+ 渲染路径存在已知 Bug：GetMainLight().distanceAttenuation 可能错误返回 0，导致场景全黑
     // 3. 使用 Simple 版本既避免了 Bug，又在语义上更清晰地表达"无距离衰减"
-    Light mainLight = GetMainLight();
+    float4 shadowCoord = TransformWorldToShadowCoord(fragData.PositionWS);
+    Light mainLight = GetMainLight(shadowCoord);
     half3 lighting = IonLight_LambertSimple(normalWS, mainLight.direction, mainLight.color, mainLight.shadowAttenuation);
     
     // === 附加光源（点光源和聚光灯）===
     // 注意：附加光源使用 IonLight_Lambert（包含距离衰减）
     // 原因：点光源和聚光灯都有距离衰减，光照强度随距离递减
     #ifdef _ADDITIONAL_LIGHTS
+        half4 shadowMask = half4(1.0h, 1.0h, 1.0h, 1.0h);
+
         uint pixelLightCount = GetAdditionalLightsCount();
         for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
         {
             // 获取附加光源信息
-            Light light = GetAdditionalLight(lightIndex, fragData.PositionWS);
+            Light light = GetAdditionalLight(lightIndex, fragData.PositionWS,shadowMask);
             
             // 计算光照贡献（包含距离衰减）
             half3 additionalLighting = IonLight_Lambert(
