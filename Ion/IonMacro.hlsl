@@ -48,6 +48,10 @@
 #define FE_10(ACT, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) ACT(x1) FE_9(ACT, x2, x3, x4, x5, x6, x7, x8, x9, x10)
 
 // 定义变量检查宏
+#define PassCheck(name) !defined(name)
+
+#define PassNul(name) #define name  
+
 #define PassVar(name) (!defined(PassVar_##name))
 
 #endif

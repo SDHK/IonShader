@@ -1,29 +1,75 @@
-﻿
-
-#if Def(IonPassMainSimple)
+﻿#if Def(IonPassMainSimple)
 #define Def_IonPassMainSimple
 
-#if PassVar(MainTex)
-#error "IonPassMainSimple 缺少必要的参数定义：MainTex"
-#endif
-
-#if PassVar(MainTex_ST)
-#error "IonPassMainSimple 缺少必要的参数定义：MainTex_ST"
-#endif
-
+//===[必要参数声明]====================================================
+// 主贴图：启用颜色系统时作灰度细节图（.r 通道），否则全彩贴图
 sampler2D PassVar_MainTex;
 float4 PassVar_MainTex_ST;
 
-#define IonKey_Instancing
+// ColorMask：RGBA 四通道权重分别对应 Color1 ~ Color4 区域
+sampler2D PassVar_ColorMask;
+float4 PassVar_Color1;// 主色（R 通道区域）
+float4 PassVar_Color2;// 次色（G 通道区域）
+float4 PassVar_Color3;// 附加色（B 通道区域）
+float4 PassVar_Color4;// 高亮色（A 通道区域）
 
+float PassVar_LightInfluence;
+float PassVar_LightMax;
+float PassVar_LightMin;
+
+// EmissiveTex：自发光遮罩灰度图（.r 通道，黑=不发光 白=全发光，默认 black=无自发光）
+sampler2D PassVar_EmissiveTex;
+float PassVar_EmissiveIntensity;// 自发光强度倍率（与灰度图相乘，0=关闭）
+
+// BaseRamp 光照（固定参考方向，提供不随光源变化的结构性阴影）
+float PassVar_BaseRampInfluence;// BaseRamp 混合权重（0=不启用，1=完全启用）
+float3 PassVar_BaseRampDir;// 固定参考方向（世界空间，默认 (0,1,0) 向上）
+
+float4 PassVar_BaseRampColor1;
+float4 PassVar_BaseRampColor2;
+float4 PassVar_BaseRampColor3;
+float4 PassVar_BaseRampColor4;
+float4 PassVar_BaseRampColor5;
+
+float PassVar_BaseRampThreshold1;
+float PassVar_BaseRampThreshold2;
+float PassVar_BaseRampThreshold3;
+float PassVar_BaseRampThreshold4;
+
+float PassVar_BaseRampSoftness1;
+float PassVar_BaseRampSoftness2;
+float PassVar_BaseRampSoftness3;
+float PassVar_BaseRampSoftness4;
+
+// Ramp 动态光照（灰度，只控制阴影边界，颜色由光源颜色和 BaseRamp 提供）
+float PassVar_LightRampThreshold;// 阴影边界位置（NdotL 轴 0~1）
+float PassVar_LightRampSoftness;// 边界过渡宽度（0=硬切卡通）
+
+
+// 菲涅耳边缘光
+float PassVar_RimPower;// 边缘集中度（高=细窄，低=宽泛，建议 2~8）
+float PassVar_RimIntensity;// 边缘光强度（0=关闭）
+
+// 背光边缘光（逆光轮廓光，跟随光源方向）
+float4 PassVar_BackRimColor;// 背光颜色
+float PassVar_BackRimPower;// 边缘集中度（建议 2~8）
+float PassVar_BackRimIntensity;// 背光强度（0=关闭）
+
+
+//===[定义宏]====================================================
+#define IonKey_Instancing
 #define IonKey_Fog
+#define IonKey_ForwardBase // 生成 multi_compile_fwdbase，驱动 SHADOWS_DEPTH 等阴影变体编译
 #define IonKey_MainLightShadows
 #define IonKey_MainLightShadowsCascade
 #define IonKey_ShadowsSoft
+// #define IonSet_ShadowScreen
+// IonSet_ShadowScreen 不启用：
+// 屏幕空间阴影依赖不透明物体的深度缓冲，透明物体（ZWrite Off）不写深度，
+// 导致采样到身后物体的阴影数据，在透明表面产生矩形投影。
+// 改用 light-space 深度图采样，基于顶点世界坐标，不依赖屏幕深度，透明兼容。
 
-// 阴影设置
-#define IonSet_ShadowScreen
-
+//===[引入核心库]====================================================
 #define Link_IonBase
 #define Link_IonLight
 #define Link_IonMatrix
@@ -45,7 +91,6 @@ struct FragData
     IonVar_T0(float2, UV)
     IonVar_T1(float3, NormalWS)
     IonVar_T2(float3, PositionWS)
-    //阴影坐标字段
     IonVar_T3(float4, ShadowCoord)
 };
 
@@ -53,17 +98,11 @@ struct FragData
 FragData vert(VertData vertData)
 {
     FragData fragData;
-    
-    fragData.UV = IonMath_Transform2D(vertData.UV.xy, PassVar_MainTex_ST.xy,PassVar_MainTex_ST.zw);
-    // 计算世界空间位置
+    fragData.UV = IonMath_Transform2D(vertData.UV.xy, PassVar_MainTex_ST.xy, PassVar_MainTex_ST.zw);
     fragData.PositionCS = IonMatrix_ObjectToClip(vertData.PositionOS);
-
-    // 将法线转换到世界空间（使用法线专用函数）
     fragData.NormalWS = IonMatrix_ObjectToWorldNormal(vertData.Normal);
-    // 计算世界空间位置
     fragData.PositionWS = IonMatrix_ObjectToWorld(vertData.PositionOS);
-
-    // 统一的阴影坐标传递（兼容URP和BRP）
+    // light-space shadow coord：基于顶点世界坐标变换，不依赖屏幕深度缓冲
     fragData.ShadowCoord = IonLight_ShadowCoord(vertData.PositionOS, fragData.PositionCS, fragData.PositionWS);
     return fragData;
 }
@@ -71,24 +110,106 @@ FragData vert(VertData vertData)
 #pragma fragment frag
 half4 frag(FragData fragData) : SV_Target
 {
-    // 采样主贴图颜色
-    half4 mainTex = tex2D(_MainTex, fragData.UV);
+    half4 mainTex = tex2D(PassVar_MainTex, fragData.UV);
 
-    // 获取主光源信息并计算阴影（统一接口，自动适配URP/BRP）
-    IonStruct_Light mainLight = IonLight_MainLight(fragData.ShadowCoord);
+    // 计算视线方向
+    float3 viewDir = normalize(IonParam_WorldSpaceCameraPos - fragData.PositionWS);
 
-    // 计算 Lambert 光照（使用工具函数）
+    //===[自发光]===================================================
+    float emissiveMask = tex2D(PassVar_EmissiveTex, fragData.UV).r;
+    float emissiveWeight = saturate(emissiveMask * PassVar_EmissiveIntensity);
+
+    //===[场景光照]================================================
     float3 normalWS = normalize(fragData.NormalWS);
-    half3 directLighting = IonLight_LambertSimple(normalWS, mainLight.Direction, mainLight.Color, mainLight.ShadowAttenuation);
+    IonStruct_Light light = IonLight_MainLight(fragData.ShadowCoord);
+    // 光向下=1，光向上(夜晚)=0
+    float sunUp = saturate(light.Direction.y);  // 光向下=1，光向上(夜晚)=0
+    // 光照钳制，避免发光过亮导致溢出
+    float3 lightBaseColor = clamp(light.Color*sunUp, emissiveWeight, PassVar_LightMax);
+    // 综合距离衰减和阴影衰减，得到最终光照颜色
+    float3 lightColor = lightBaseColor * light.DistanceAttenuation * light.ShadowAttenuation;
+    // 计算光照亮度（灰度）
+    float lightLuma = saturate(dot(lightColor, float3(0.299, 0.587, 0.114)));
+    // 主体光照色影响度，防止过度受光源颜色调制
+    float3 mainLightColor = lerp(lightLuma, saturate(lightColor), PassVar_LightInfluence);
+    // 当光线消失时，保持固定方向以维持 BaseRamp 的结构性阴影效果
+    half3 lightDirection = lerp(PassVar_BaseRampDir, light.Direction, ceil(lightLuma));
+
     
-    // 最终光照 = 直接光照 + 环境光
-    float3 lighting = directLighting + IonParam_AmbientSky.rgb;
+    //===[4 色混合]=================================================
+    // ColorMask RGBA 权重混合 Color1~4，未覆盖区域透出 MainTex 原色
+    // MainTex.r 作为灰度细节叠加到最终颜色
+    half4 colorMask = tex2D(PassVar_ColorMask, fragData.UV);
 
-    // 应用光照
-    mainTex.rgb *= lighting;
+    // 计算每个颜色区域的 alpha 权重
+    float baseAlpha1 = colorMask.r * PassVar_Color1.a;
+    float baseAlpha2 = colorMask.g * PassVar_Color2.a;
+    float baseAlpha3 = colorMask.b * PassVar_Color3.a;
+    float baseAlpha4 = colorMask.a * PassVar_Color4.a;
+    float baseAlpha = baseAlpha1 + baseAlpha2 + baseAlpha3 + baseAlpha4;
 
-    return mainTex;
+    // 计算每个颜色区域的 RGB 值
+    float3 baseColor1 = PassVar_Color1.rgb * baseAlpha1;
+    float3 baseColor2 = PassVar_Color2.rgb * baseAlpha2;
+    float3 baseColor3 = PassVar_Color3.rgb * baseAlpha3;
+    float3 baseColor4 = PassVar_Color4.rgb * baseAlpha4;
+    float3 baseColor = baseColor1 + baseColor2 + baseColor3 + baseColor4;
+    baseColor = baseColor / baseAlpha;
+
+
+    // BaseRamp：固定方向结构性阴影（定义颜色区间，受光源强度/阴影调制，不自发光）
+    // 将固定方向转换到世界空间
+    float3 baseRampDirWS = IonMatrix_ObjectToWorld(PassVar_BaseRampDir.xyz);
+    float NdotBase = saturate(dot(normalWS, baseRampDirWS) * 0.5 + 0.5);
+
+    // 计算法线与固定方向的夹角，映射到 0~1 作为 BaseRamp 权重
+    float3 N = normalize(normalWS);
+    float3 D = normalize(baseRampDirWS);
+    float cosTheta = clamp(dot(N, D), -1.0, 1.0);
+    float angle = acos(cosTheta) * (180.0 / UNITY_PI);
+    // 0 ~ 180（角度）
+    float NdotBaseLine = 1 - angle / 180.0;
+
+
+    float3 offsetColor1 = (PassVar_BaseRampColor1 - PassVar_BaseRampColor3).rgb;
+    float3 offsetColor2 = (PassVar_BaseRampColor2 - PassVar_BaseRampColor3).rgb;
+    float3 offsetColor4 = (PassVar_BaseRampColor4 - PassVar_BaseRampColor3).rgb;
+    float3 offsetColor5 = (PassVar_BaseRampColor5 - PassVar_BaseRampColor3).rgb;
+
+    float3 baseRampColor = IonLight_Ramp(NdotBaseLine, baseColor + offsetColor1, PassVar_BaseRampThreshold1, PassVar_BaseRampSoftness1, baseColor + offsetColor2, PassVar_BaseRampThreshold2, PassVar_BaseRampSoftness2, baseColor, PassVar_BaseRampThreshold3, PassVar_BaseRampSoftness3, baseColor + offsetColor4, PassVar_BaseRampThreshold4, PassVar_BaseRampSoftness4, baseColor + offsetColor5);
+
+    // 混合NdotBase 是为了让BaseRampColor 随法线方向变化而变化
+    baseRampColor = (baseRampColor * (NdotBase * 0.5 + 0.5));
+    baseColor = lerp(baseColor, baseRampColor, PassVar_BaseRampInfluence);
+
+    // Ramp：动态光照（灰度，跟随光源方向）
+    float NdotL = saturate(dot(normalWS, lightDirection) * 0.5 + 0.5);
+    float rampGray = IonLight_RampGray(NdotL, PassVar_LightRampThreshold, PassVar_LightRampSoftness);
+    // 光照强度映射到指定范围，避免过暗或过亮
+    rampGray = rampGray * (PassVar_LightMax - PassVar_LightMin) + PassVar_LightMin;
+
+    // 菲涅耳边缘光（始终存在，不依赖光源）
+    float fresnel = IonLight_Fresnel(normalWS, viewDir, (PassVar_RimPower + lightLuma) * 0.5);
+    PassVar_RimIntensity = PassVar_RimIntensity * (PassVar_LightMax + lightLuma);
+    half3 rimLight = baseColor * lightColor * fresnel * PassVar_RimIntensity;
+
+
+    // 背光边缘光（逆光时才亮，颜色受光源颜色调制）
+    float backRim = IonLight_BackRim(normalWS, viewDir, lightDirection, (PassVar_BackRimPower + lightLuma) * 0.5);
+    PassVar_BackRimIntensity = PassVar_BackRimIntensity * (PassVar_LightMax + lightLuma);
+    half3 backRimLight = baseColor * lightColor * backRim * PassVar_BackRimIntensity;
+
+
+    // 环境光球谐光照，晚上没有球谐光照
+    float3 ambient = ShadeSH9(float4(normalWS, 1));
+    
+
+    float3 dynamicShading = mainLightColor * rampGray + rimLight + backRimLight + ambient;
+    // 合并：颜色 + 动态光照（随光源）
+    half3 finalColor = baseColor * dynamicShading;
+
+
+    return half4(finalColor, mainTex.a);
 }
 
-#endif // Def(IonPassMainSimple)
-
+#endif// Def(IonPassMainSimple)

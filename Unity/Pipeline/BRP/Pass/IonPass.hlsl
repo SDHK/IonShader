@@ -32,8 +32,9 @@
 
 //===[引入Pass库]===
 
+#include "DepthPre/IonLinkDepthPre.hlsl"
 #include "Main/IonLinkMain.hlsl"
 #include "ShadowCaster/IonLinkShadowCaster.hlsl"
-#include "Outline/IonLinkOutline.hlsl" 
+#include "Outline/IonLinkOutline.hlsl"
 
 #endif // Def_IonPass

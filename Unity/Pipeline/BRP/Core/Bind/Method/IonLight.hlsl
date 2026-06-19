@@ -74,6 +74,7 @@ IonStruct_Light IonLight_MainLight(float4 shadowCoord)
 {
     IonStruct_Light light = IonLight_MainLight();
     #if defined(SHADOWS_SCREEN)
+        // 屏幕空间阴影（不透明物体默认路径）
         #if defined(UNITY_NO_SCREENSPACE_SHADOWS)
             #if defined(SHADOWS_NATIVE)
                 light.ShadowAttenuation = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);
@@ -86,6 +87,16 @@ IonStruct_Light IonLight_MainLight(float4 shadowCoord)
         #else
             light.ShadowAttenuation = UNITY_SAMPLE_SCREEN_SHADOW(_ShadowMapTexture, shadowCoord);
         #endif
+    #elif defined(SHADOWS_DEPTH) && !defined(SPOT) && !defined(UNITY_PASS_SHADOWCASTER)
+        // Light-space 方向光级联阴影（透明物体兼容路径，不依赖屏幕深度缓冲）
+        // UNITY_PASS_SHADOWCASTER 排除：ShadowCaster Pass 也带 SHADOWS_DEPTH，但不需要采样
+        #if defined(SHADOWS_NATIVE)
+            light.ShadowAttenuation = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);
+        #else
+            unityShadowCoord dist = SAMPLE_DEPTH_TEXTURE(_ShadowMapTexture, shadowCoord.xy);
+            light.ShadowAttenuation = max(dist > shadowCoord.z, _LightShadowData.x);
+        #endif
+        light.ShadowAttenuation = _LightShadowData.r + light.ShadowAttenuation * (1 - _LightShadowData.r);
     #endif
     return light;
 }
@@ -171,20 +182,28 @@ float4 IonLight_LightCoord(float4 positionOS)
 float4 IonLight_ShadowCoord(float4 positionOS, float4 positionCS, float3 positionWS)
 {
     #if defined(SHADOWS_SCREEN)
+        // 屏幕空间阴影坐标（不透明物体默认路径）
         #if defined(UNITY_NO_SCREENSPACE_SHADOWS)
             return mul(unity_WorldToShadow[0], mul(unity_ObjectToWorld, positionOS));
         #else
             return ComputeScreenPos(positionCS);
         #endif
+    #elif defined(SHADOWS_DEPTH) && !defined(SPOT)
+        // Light-space 方向光级联阴影坐标（透明物体兼容路径）
+        // 基于顶点世界坐标变换到光源空间，不依赖主摄像机深度缓冲
+        return mul(unity_WorldToShadow[0], mul(unity_ObjectToWorld, positionOS));
     #elif defined(SHADOWS_DEPTH) && defined(SPOT)
+        // 聚光灯阴影坐标
         return mul(unity_WorldToShadow[0], mul(unity_ObjectToWorld, positionOS));
     #elif defined(SHADOWS_CUBE)
+        // 点光源立方体阴影坐标
         float3 shadowCoord3 = mul(unity_ObjectToWorld, positionOS).xyz - _LightPositionRange.xyz;
-        return float4(shadowCoord3, 0.0); // 返回float4，但只使用xyz部分
+        return float4(shadowCoord3, 0.0);
     #else
         return float4(0, 0, 0, 0); // 无阴影情况
     #endif
 }
+
 
 
 //===[阴影投射相关方法] ===
